@@ -1,0 +1,17 @@
+﻿################################################################################
+# 此 .gitignore 文件已由 Microsoft(R) Visual Studio 自动创建。
+################################################################################
+
+/Computer_Graphics_with_OpenGL/Debug/opengl.tlog
+/Computer_Graphics_with_OpenGL/Debug
+/Computer_Graphics_with_OpenGL/ipch
+/Computer_Graphics_with_OpenGL/shell32.pdb/48BF2FC036914E1F835027F5AE3FB15A1
+*.opensdf
+*.sdf
+*.sln
+*.vcxproj
+*.filters
+/Computer_Graphics_with_OpenGL/ReadMe.txt
+/Computer_Graphics_with_OpenGL/stdafx.h
+/Computer_Graphics_with_OpenGL/targetver.h
+/Computer_Graphics_with_OpenGL/stdafx.cpp
