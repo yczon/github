@@ -4,53 +4,91 @@
 
 using namespace std;
 
-void init(void)
+const double TWO_PI = 6.2831853;
+
+/* Initial disp;ay-window size. */
+GLsizei winWidth = 400, winHeight = 400;
+GLuint regHex;
+
+class screenPt
 {
+private:
+	GLint x, y;
+public:
+	screenPt()
+	{
+		x = y = 0;
+	}
+
+	void setCoords(GLint xCoord, GLint yCoord)
+	{
+		x = xCoord;
+		y = yCoord;
+	}
+
+	GLint getx() const {
+		return x;
+	}
+
+	GLint gety() const {
+		return y;
+	}
+};
+
+static void init(void)
+{
+	screenPt hexVertex, circCtr;
+	GLdouble theta;
+	GLint k;
+
+	circCtr.setCoords(winWidth / 2, winHeight / 2);
+
 	glClearColor(1.0, 1.0, 1.0, 0.0);
 
+	regHex = glGenLists(1);
+	glNewList(regHex, GL_COMPILE);
+		glColor3f(1.0, 0.0, 0.0);
+		glBegin(GL_POLYGON);
+		for (k = 0;k < 6;k++)
+		{
+			theta = TWO_PI * k / 6.0;
+			hexVertex.setCoords(circCtr.getx() + 150 * cos(theta),
+				circCtr.gety() + 150 * sin(theta));
+			glVertex2i(hexVertex.getx(), hexVertex.gety());
+		}
+		glEnd();
+	glEndList();
+}
+
+void regHexagon(void)
+{
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	glCallList(regHex);
+
+	glFlush();
+}
+
+void winReshapeFcn(int newWidth, int newHeight)
+{
 	glMatrixMode(GL_PROJECTION);
-	gluOrtho2D(0.0, 200.0, 0.0, 150.0);
-}
+	glLoadIdentity();
+	gluOrtho2D(0.0, (GLdouble)newWidth, 0.0, (GLdouble)newHeight);
 
-void lineSegment(void)
-{
 	glClear(GL_COLOR_BUFFER_BIT);
-
-	glColor3f(0.0, 0.4, 0.2);
-	glBegin(GL_LINES);
-	glVertex2i(180, 15);
-	glVertex2i(10, 145);
-	glEnd();
-
-	glFlush();
 }
 
-void draw()
-{
-	glClear(GL_COLOR_BUFFER_BIT);
-
-	glColor3f(0.0, 0.4, 0.2);
-	GLubyte bitShape[20] = {
-		0x1c,0x00,0x1c,0x00,0x1c,0x00,0x1c,0x00,0x1c,0x00,
-		0xff,0x80,0x7f,0x00,0x3e,0x00,0x1c,0x00,0x08,0x00
-	};
-
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	glRasterPos2i(30, 40);
-	glBitmap(9, 10, 0.0, 0.0, 20.0, 15.0, bitShape);
-	glFlush();
-}
-void main(int argc, char ** argv)
+void main(int argc, char **argv)
 {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
-	glutInitWindowPosition(50,100);
-	glutInitWindowSize(400,300);
-	glutCreateWindow("An Example OpenGL Program");
+	glutInitWindowPosition(100, 100);
+	glutInitWindowSize(winWidth, winHeight);
+	glutCreateWindow("Reshape-Function & Display-List Example");
 
 	init();
+	glutDisplayFunc(regHexagon);
+	glutReshapeFunc(winReshapeFcn);
 
-
-	glutDisplayFunc(draw);
 	glutMainLoop();
 }
