@@ -6,7 +6,7 @@ using namespace std;
 
 const double TWO_PI = 6.2831853;
 
-/* Initial disp;ay-window size. */
+//  Initial display-window size.
 GLsizei winWidth = 400, winHeight = 400;
 GLuint regHex;
 
@@ -15,6 +15,7 @@ class screenPt
 private:
 	GLint x, y;
 public:
+	// Default Constructor: initializes coordinate position to (0,0)
 	screenPt()
 	{
 		x = y = 0;
@@ -41,13 +42,18 @@ static void init(void)
 	GLdouble theta;
 	GLint k;
 
+	// Set circle center coordinates.
 	circCtr.setCoords(winWidth / 2, winHeight / 2);
 
 	glClearColor(1.0, 1.0, 1.0, 0.0);
 
-	regHex = glGenLists(1);
+	/* Set up a display list for a red regular hexagon.
+	 * Vertices for the hexagon are six equally spaced
+	 * points around the circumference of a circle.
+	 */
+	regHex = glGenLists(1);				// Get an identifier for the display list.
 	glNewList(regHex, GL_COMPILE);
-		glColor3f(1.0, 0.0, 0.0);
+		glColor3f(0.2, 0.4, 0.2);		// Set fill color for hexagon to red.
 		glBegin(GL_POLYGON);
 		for (k = 0;k < 6;k++)
 		{
