@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include<GL/glut.h>
 #include<iostream>
-#include"chp_3/lineGraph.h"
+#include"chp_3/barChart.h"
 
 using namespace std;
 
@@ -14,7 +14,7 @@ void main(int argc, char **argv)
 	glutCreateWindow("Line Chart Data Plot");
 
 	init();
-	glutDisplayFunc(lineGraph);
+	glutDisplayFunc(barChart);
 	glutReshapeFunc(winReshapeFcn);
 
 	glutMainLoop();
