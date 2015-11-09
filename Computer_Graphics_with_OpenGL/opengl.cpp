@@ -23,28 +23,24 @@ void init(void)
 	gluOrtho2D(0.0, 200.0, 0.0, 150.0);
 }
 
-void quad(GLint n1, GLint n2, GLint n3, GLint n4)
-{
-	glBegin(GL_QUADS);
-	glVertex3iv(pt[n1]);
-	glVertex3iv(pt[n2]);
-	glVertex3iv(pt[n3]);
-	glVertex3iv(pt[n4]);
-	glEnd();
-}
-
 void cube()
 {
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	glColor3f(0.0, 0.4, 0.2);
 
-	quad(6,2,3,7);
-	quad(5,1,0,4);
-	quad(7,3,0,4);
-	quad(4,0,2,6);
-	quad(2,0,1,3);
-	quad(7,5,4,6);
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glVertexPointer(3, GL_INT, 0, pt);
+	GLubyte vertIndex[] = {
+			6,2,3,7,
+			5,1,0,4,
+			7,3,0,4,
+			4,0,2,6,
+			2,0,1,3,
+			7,5,4,6
+	};
+
+	glDrawElements(GL_QUADS, 24, GL_UNSIGNED_BYTE, vertIndex);
 
 	glFlush();
 }
