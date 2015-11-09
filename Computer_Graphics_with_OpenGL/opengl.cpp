@@ -22,7 +22,7 @@ void lineSegment(void)
 
 	glColor3f(0.2, 0.5, 0.3);
 
-	glBegin(GL_LINE_STRIP);
+	glBegin(GL_LINE_LOOP);
 	glVertex2iv(p1);
 	glVertex2iv(p2);
 	glVertex2iv(p3);
