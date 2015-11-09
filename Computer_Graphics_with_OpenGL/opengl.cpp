@@ -24,16 +24,19 @@ void lineSegment(void)
 
 	glColor3f(0.2, 0.5, 0.3);
 
-	glBegin(GL_QUADS);
+	glBegin(GL_QUAD_STRIP);
 	glVertex2iv(p1);
 	glVertex2iv(p2);
-	glVertex2iv(p3);
 	glVertex2iv(p4);
+	glVertex2iv(p3);
 
 	glVertex2iv(p5);
 	glVertex2iv(p6);
-	glVertex2iv(p7);
+
 	glVertex2iv(p8);
+	glVertex2iv(p7);
+
+
 	glEnd();
 
 	glFlush();
