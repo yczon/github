@@ -2,15 +2,17 @@
 #include<GL/glut.h>
 #include<cstdlib>
 #include<cmath>
+#include<iostream>
 
-const GLdouble twoPi = 6.283185;
-
-class scrPt {
-public:
-	GLint x, y;
+using namespace std;
+struct screenPt
+{
+	GLint x;
+	GLint y;
 };
 
-GLsizei winWidth = 400, winHeight = 300;
+typedef enum { limacon = 1, cardioid, threeLeaf, fourLeaf, spiral } curveName;
+GLsizei winWidth = 600, winHeight = 500;
 
 void init(void)
 {
@@ -20,91 +22,82 @@ void init(void)
 	gluOrtho2D(0.0, 200.0, 0.0, 150.0);
 }
 
-void setPixel(GLint i,GLint j)
-{ 
-	glBegin(GL_POINTS);
-	glVertex2i(i, j);
+void lineSegment(screenPt pt1, screenPt pt2)
+{
+	glBegin(GL_LINES);
+	glVertex2i(pt1.x, pt1.y);
+	glVertex2i(pt2.x, pt2.y);
 	glEnd();
 }
 
-void circlePlotPoints(scrPt circCtr,scrPt circPt)
-{ 
-	setPixel(circCtr.x + circPt.x, circCtr.y + circPt.y);
-	setPixel(circCtr.x - circPt.x, circCtr.y + circPt.y);
-	setPixel(circCtr.x + circPt.x, circCtr.y - circPt.y);
-	setPixel(circCtr.x - circPt.x, circCtr.y - circPt.y);
-
-	setPixel(circCtr.x + circPt.y, circCtr.y + circPt.x);
-	setPixel(circCtr.x - circPt.y, circCtr.y + circPt.x);
-	setPixel(circCtr.x + circPt.y, circCtr.y - circPt.x);
-	setPixel(circCtr.x - circPt.y, circCtr.y - circPt.x);
-}
-
-
-void circleMidpoint(scrPt circCtr, GLint radius)
+void drawCurve(GLint curveNum)
 {
-	scrPt circPt;
-	GLint p = 1 - radius;
-	circPt.x = 0;
-	circPt.y = radius;
-	void circlePlotPoints(scrPt, scrPt);
-	circlePlotPoints(circCtr, circPt);
-	while (circPt.x < circPt.y)
+	const GLdouble twoPi = 6.283185;
+	const GLint a = 175, b = 60;
+
+	GLfloat r, theta, dtheta = 1.0 / float(a);
+	GLint x0 = 200, y0 = 250;
+	screenPt curvePt[2];
+
+	glColor3f(0.0, 0.0, 0.0);
+
+	curvePt[0].x = x0;
+	curvePt[0].y = y0;
+
+	switch (curveNum)
 	{
-		circPt.x++;
-		if (p < 0)
-			p += 2 * circPt.x + 1;
-		else
+	case limacon:	curvePt[0].x += a + b;	break;
+	case cardioid:	curvePt[0].x += a + a;	break;
+	case threeLeaf:	curvePt[0].x += a;
+	case fourLeaf:	curvePt[0].x += a;
+	case spiral:	break;
+	default:break;
+	}
+
+	theta = dtheta;
+	while (theta < twoPi)
+	{
+		switch (curveNum)
 		{
-			circPt.y--;
-			p += 2 * (circPt.x - circPt.y) + 1;
+		case limacon:	
+			r = a * cos(theta) + b;	break;
+		case cardioid:	
+			r = a * (1+cos(theta));	break;
+		case threeLeaf:	
+			r = a * cos(3 * theta);	break;
+		case fourLeaf:	
+			r = a * cos(2 * theta);	break;
+		case spiral:	
+			r = (a / 4.0) * theta;	break;
+		default:break;
 		}
-		circlePlotPoints(circCtr, circPt);
+		curvePt[1].x = x0 + r*cos(theta);
+		curvePt[1].y = y0 + r * sin(theta);
+		lineSegment(curvePt[0], curvePt[1]);
+
+		curvePt[0].x = curvePt[1].x;
+		curvePt[0].y = curvePt[1].y;
+		theta += dtheta;
 	}
-
-
-}
-
-void pieChart(void)
-{
-	scrPt circCtr, piePt;
-	GLint radius = winWidth / 4;
-
-	GLdouble sliceAngle, previousSliceAngle = 0.0;
-
-	GLint k, nSlices = 12;
-	GLfloat dataValues[12] = { 10.0,7.0,13.0,5.0,13.0,14.0,
-		3.0,16.0,5.0,3.0,17.0,8.0 };
-	GLfloat dataSum = 0.0;
-
-	circCtr.x = winWidth / 2;
-	circCtr.y = winHeight / 2;
-
-	circleMidpoint(circCtr, radius);
-
-	for (k = 0;k < nSlices;++k)
-		dataSum += dataValues[k];
-
-	for (k = 0;k < nSlices;++k)
-	{
-		sliceAngle = twoPi * dataValues[k] / dataSum + previousSliceAngle;
-		piePt.x = circCtr.x + radius * cos(sliceAngle);
-		piePt.y = circCtr.y + radius * sin(sliceAngle);
-
-		glBegin(GL_LINES);
-		glVertex2i(circCtr.x, circCtr.y);
-		glVertex2i(piePt.x, piePt.y);
-		glEnd();
-		previousSliceAngle = sliceAngle;
-	}
-
 }
 
 void displayFcn(void)
 {
+	GLint curveNum;
+
 	glClear(GL_COLOR_BUFFER_BIT);
-	glColor3f(0.0, 0.0, 1.0);
-	pieChart();
+
+	cout << "\nEnter the integer value corresponding to\n";
+	cout << "one of the following curve names.\n";
+	cout << "Press any other key to exit.\n";
+	cout << "\n1-limacon,2-cardioid,3-threeLeaf,4-fourLeaf,5-spiral: ";
+	cin >> curveNum;
+
+	if (curveNum == 1 || curveNum == 2 || curveNum == 3 || curveNum == 4 || curveNum == 5)
+		drawCurve(curveNum);
+	else
+		exit(0);
+
 	glFlush();
 }
 
@@ -112,20 +105,18 @@ void winReshapeFcn(GLint newWidth, GLint newHeight)
 {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluOrtho2D(0.0,GLdouble(newWidth),0.0,GLdouble(newHeight));
+	gluOrtho2D(0.0, (GLdouble)newWidth, 0.0, (GLdouble)newHeight);
 
 	glClear(GL_COLOR_BUFFER_BIT);
-
-	winWidth = newWidth;
-	winHeight = newHeight;
 }
+
 void main(int argc, char ** argv)
 {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
 	glutInitWindowPosition(100, 100);
 	glutInitWindowSize(winWidth,winHeight);
-	glutCreateWindow("Pie Chart");
+	glutCreateWindow("Draw Curves");
 
 	init();
 
