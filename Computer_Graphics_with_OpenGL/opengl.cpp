@@ -25,21 +25,6 @@ void lineSegment(void)
 	glFlush();
 }
 
-void draw()
-{
-	glClear(GL_COLOR_BUFFER_BIT);
-
-	glColor3f(0.0, 0.4, 0.2);
-	GLubyte bitShape[20] = {
-		0x1c,0x00,0x1c,0x00,0x1c,0x00,0x1c,0x00,0x1c,0x00,
-		0xff,0x80,0x7f,0x00,0x3e,0x00,0x1c,0x00,0x08,0x00
-	};
-
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	glRasterPos2i(30, 40);
-	glBitmap(9, 10, 0.0, 0.0, 20.0, 15.0, bitShape);
-	glFlush();
-}
 void main(int argc, char ** argv)
 {
 	glutInit(&argc, argv);
@@ -51,6 +36,6 @@ void main(int argc, char ** argv)
 	init();
 
 
-	glutDisplayFunc(draw);
+	glutDisplayFunc(lineSegment);
 	glutMainLoop();
 }
