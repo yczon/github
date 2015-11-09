@@ -13,9 +13,23 @@ void lineSegment(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	glColor3f(0.0, 1.0, 0.0);
+	int p1[] = { 20,30 };
+	int p2[] = { 30,10 };
+	int p3[] = { 50,10 };
+	int p4[] = { 60,30 };
+	int p5[] = { 50,50 };
+	int p6[] = { 30,50 };
 
-	glRecti(100, 10, 10, 100);
+	glColor3f(0.2, 0.5, 0.3);
+
+	glBegin(GL_POLYGON);
+	glVertex2iv(p1);
+	glVertex2iv(p2);
+	glVertex2iv(p3);
+	glVertex2iv(p4);
+	glVertex2iv(p5);
+	glVertex2iv(p6);
+	glEnd();
 
 	glFlush();
 }
