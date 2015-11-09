@@ -22,13 +22,14 @@ void lineSegment(void)
 
 	glColor3f(0.2, 0.5, 0.3);
 
-	glBegin(GL_LINE_LOOP);
+	glBegin(GL_TRIANGLES);
+	glVertex2iv(p6);
 	glVertex2iv(p1);
 	glVertex2iv(p2);
+
 	glVertex2iv(p3);
 	glVertex2iv(p4);
 	glVertex2iv(p5);
-	glVertex2iv(p6);
 	glEnd();
 
 	glFlush();
