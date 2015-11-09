@@ -25,30 +25,27 @@ void init(void)
 
 void quad(GLint n1, GLint n2, GLint n3, GLint n4)
 {
-	glClear(GL_COLOR_BUFFER_BIT);
-
-	glColor3f(0.0, 0.4, 0.2);
-	glBegin(GL_LINES);
-	glVertex2i(180, 15);
-	glVertex2i(10, 145);
+	glBegin(GL_QUADS);
+	glVertex3iv(pt[n1]);
+	glVertex3iv(pt[n2]);
+	glVertex3iv(pt[n3]);
+	glVertex3iv(pt[n4]);
 	glEnd();
-
-	glFlush();
 }
 
-void draw()
+void cube()
 {
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	glColor3f(0.0, 0.4, 0.2);
-	GLubyte bitShape[20] = {
-		0x1c,0x00,0x1c,0x00,0x1c,0x00,0x1c,0x00,0x1c,0x00,
-		0xff,0x80,0x7f,0x00,0x3e,0x00,0x1c,0x00,0x08,0x00
-	};
 
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	glRasterPos2i(30, 40);
-	glBitmap(9, 10, 0.0, 0.0, 20.0, 15.0, bitShape);
+	quad(6,2,3,7);
+	quad(5,1,0,4);
+	quad(7,3,0,4);
+	quad(4,0,2,6);
+	quad(2,0,1,3);
+	quad(7,5,4,6);
+
 	glFlush();
 }
 void main(int argc, char ** argv)
@@ -62,6 +59,6 @@ void main(int argc, char ** argv)
 	init();
 
 
-	glutDisplayFunc(draw);
+	glutDisplayFunc(cube);
 	glutMainLoop();
 }
