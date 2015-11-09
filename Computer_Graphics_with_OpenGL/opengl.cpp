@@ -14,7 +14,6 @@ wcPt2D dataPts[5];
 void init(void)
 {
 	glClearColor(1.0, 1.0, 1.0, 0.0);
-
 	glMatrixMode(GL_PROJECTION);
 	gluOrtho2D(0.0, 200.0, 0.0, 150.0);
 }
@@ -24,12 +23,12 @@ void lineSegment(void)
 {
 	glEnable(GL_LINE_STIPPLE);
 	glLineWidth(10);
-	glLineStipple(1,0x0101);
+	glShadeModel(GL_SMOOTH);
 	glClear(GL_COLOR_BUFFER_BIT);
-	glColor3f(0.0, 0.4, 0.2);
-	int k;
 	glBegin(GL_LINES);
+		glColor3f(0.0, 0.0, 1.0);
 		glVertex2f(10, 10);
+		glColor3f(1.0, 0.0, 0.0);
 		glVertex2f(100, 100);
 	glEnd();
 	glFlush();
