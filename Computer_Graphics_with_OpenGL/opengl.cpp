@@ -1,70 +1,135 @@
 #include"stdafx.h"
 #include<GL/glut.h>
-#pragma once
+#include<cstdlib>
+#include<cmath>
 
-GLsizei winWidth = 600, winHeight = 500;
-GLint xRaster = 25, yRaster = 150;
+const GLdouble twoPi = 6.283185;
 
-GLubyte label[36] = { 'J','a','n',	'F','e','b',	'M','a','r',
-'A','p','r',	'M','a','y',	'J','u','n',
-'J','u','l',	'A','u','g',	'S','e','p',
-'O','c','t',	'N','o','v',	'D','e','c' };
+class scrPt {
+public:
+	GLint x, y;
+};
 
-GLint dataValue[12] = { 420,342,324,310,262,185,
-190,196,217,240,312,438 };
+GLsizei winWidth = 400, winHeight = 300;
 
 void init(void)
 {
-	glClearColor(1.0, 1.0, 1.0, 1.0);				// White display window.
+	glClearColor(1.0, 1.0, 1.0, 1.0);
+
 	glMatrixMode(GL_PROJECTION);
-	gluOrtho2D(0.0, 600.0, 0.0, 500.0);
+	gluOrtho2D(0.0, 200.0, 0.0, 150.0);
 }
 
-void barChart(void)
+void setPixel(GLint i,GLint j)
+{ 
+	glBegin(GL_POINTS);
+	glVertex2i(i, j);
+	glEnd();
+}
+
+void circlePlotPoints(scrPt circCtr,scrPt circPt)
+{ 
+	setPixel(circCtr.x + circPt.x, circCtr.y + circPt.y);
+	setPixel(circCtr.x - circPt.x, circCtr.y + circPt.y);
+	setPixel(circCtr.x + circPt.x, circCtr.y - circPt.y);
+	setPixel(circCtr.x - circPt.x, circCtr.y - circPt.y);
+
+	setPixel(circCtr.x + circPt.y, circCtr.y + circPt.x);
+	setPixel(circCtr.x - circPt.y, circCtr.y + circPt.x);
+	setPixel(circCtr.x + circPt.y, circCtr.y - circPt.x);
+	setPixel(circCtr.x - circPt.y, circCtr.y - circPt.x);
+}
+
+
+void circleMidpoint(scrPt circCtr, GLint radius)
 {
-	GLint month, k;
-
-	glClear(GL_COLOR_BUFFER_BIT);
-
-	glColor3f(1.0, 0.0, 0.0);
-	for (k = 0;k < 12;++k)
-		glRecti(20 + k * 50, 165, 40 + k * 50, dataValue[k]);
-
-	glColor3f(0.0, 0.0, 0.0);
-	xRaster = 20;
-	for (month = 0;month < 12;month++)
+	scrPt circPt;
+	GLint p = 1 - radius;
+	circPt.x = 0;
+	circPt.y = radius;
+	void circlePlotPoints(scrPt, scrPt);
+	circlePlotPoints(circCtr, circPt);
+	while (circPt.x < circPt.y)
 	{
-		glRasterPos2i(xRaster, yRaster);
-		for (k = 3 * month;k < 3 * month + 3;k++)
-			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, label[k]);
-
-		xRaster += 50;
+		circPt.x++;
+		if (p < 0)
+			p += 2 * circPt.x + 1;
+		else
+		{
+			circPt.y--;
+			p += 2 * (circPt.x - circPt.y) + 1;
+		}
+		circlePlotPoints(circCtr, circPt);
 	}
 
+
+}
+
+void pieChart(void)
+{
+	scrPt circCtr, piePt;
+	GLint radius = winWidth / 4;
+
+	GLdouble sliceAngle, previousSliceAngle = 0.0;
+
+	GLint k, nSlices = 12;
+	GLfloat dataValues[12] = { 10.0,7.0,13.0,5.0,13.0,14.0,
+		3.0,16.0,5.0,3.0,17.0,8.0 };
+	GLfloat dataSum = 0.0;
+
+	circCtr.x = winWidth / 2;
+	circCtr.y = winHeight / 2;
+
+	circleMidpoint(circCtr, radius);
+
+	for (k = 0;k < nSlices;++k)
+		dataSum += dataValues[k];
+
+	for (k = 0;k < nSlices;++k)
+	{
+		sliceAngle = twoPi * dataValues[k] / dataSum + previousSliceAngle;
+		piePt.x = circCtr.x + radius * cos(sliceAngle);
+		piePt.y = circCtr.y + radius * sin(sliceAngle);
+
+		glBegin(GL_LINES);
+		glVertex2i(circCtr.x, circCtr.y);
+		glVertex2i(piePt.x, piePt.y);
+		glEnd();
+		previousSliceAngle = sliceAngle;
+	}
+
+}
+
+void displayFcn(void)
+{
+	glClear(GL_COLOR_BUFFER_BIT);
+	glColor3f(0.0, 0.0, 1.0);
+	pieChart();
 	glFlush();
 }
+
 void winReshapeFcn(GLint newWidth, GLint newHeight)
 {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluOrtho2D(0.0, GLdouble(newWidth), 0.0, GLdouble(newHeight));
+	gluOrtho2D(0.0,GLdouble(newWidth),0.0,GLdouble(newHeight));
 
 	glClear(GL_COLOR_BUFFER_BIT);
+
+	winWidth = newWidth;
+	winHeight = newHeight;
 }
-
-
-
 void main(int argc, char ** argv)
 {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
 	glutInitWindowPosition(100, 100);
 	glutInitWindowSize(winWidth,winHeight);
-	glutCreateWindow("Line Chart Data Plot");
+	glutCreateWindow("Pie Chart");
 
 	init();
 
-	glutDisplayFunc(barChart);
+	glutDisplayFunc(displayFcn);
 	glutReshapeFunc(winReshapeFcn);
 
 	glutMainLoop();
