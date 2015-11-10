@@ -22,14 +22,19 @@ void init(void)
 void lineSegment(void)
 {
 	glLineWidth(10);
-	glShadeModel(GL_SMOOTH);
+	glPolygonMode(GL_FRONT,GL_LINE);
+	glColor3f(0.0, 0.0, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT);
 	glBegin(GL_TRIANGLES);
-		glColor3f(0.0, 0.0, 1.0);
 		glVertex2i(50,50);
-		glColor3f(1.0, 0.0, 0.0);
 		glVertex2i(150, 50);
-		glColor3f(0.0, 1.0, 0.0);
+		glVertex2i(75, 150);
+	glEnd();
+	glPolygonMode(GL_FRONT,GL_FILL);
+	glColor3f(0.0, 1.0, 0.0);
+	glBegin(GL_TRIANGLES);
+		glVertex2i(50,50);
+		glVertex2i(150, 50);
 		glVertex2i(75, 150);
 	glEnd();
 	glFlush();
