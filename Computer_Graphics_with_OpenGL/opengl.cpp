@@ -2,12 +2,9 @@
 #include<iostream>
 #include<map>
 #include<string>
+#include<sstream>
 
-using std::cin;
-using std::cout;
-using std::string;
-using std::endl;
-using std::map;
+using namespace std;
 
 //¼Ó
 int c_add(int i, int j)
@@ -43,11 +40,20 @@ int main(int argc, char **argv)
 	binops.insert({"*",c_mul});
 	binops.insert({"/",c_div});
 
+	string str = "12 3 4 / +";
+	istringstream record(str);
+
+	string test;
+	record >> test;
+	cout << test << endl;
+	/*
 	while (cin >> a >> b >> op)
 	{
 		cout << binops[op](a, b) << endl;
 	}
+	*/
 
+	cin.get();
 	return 0;
 }
 
