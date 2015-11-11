@@ -1,63 +1,53 @@
 #include"stdafx.h"
-#include<GL/glut.h>
+#include<iostream>
+#include<map>
+#include<string>
 
-GLsizei winWidth = 400, winHeight = 300;
+using std::cin;
+using std::cout;
+using std::string;
+using std::endl;
+using std::map;
 
-void init(void)
+//¼Ó
+int c_add(int i, int j)
 {
-	glClearColor(0.0, 0.0, 1.0, 1.0);
-
-	glMatrixMode(GL_PROJECTION);
-	gluOrtho2D(0.0, 200.0, 0.0, 150.0);
+	return i + j;
 }
 
-void displayFcn(void)
+//¼õ
+int c_minus(int i, int j)
 {
-	glClear(GL_COLOR_BUFFER_BIT);
-
-	glColor3f(1.0, 0.0, 0.0);
-	glPointSize(3.0);
+	return i - j;
 }
 
-void winReshapeFcn(GLint newWidth, GLint newHeight)
+//³Ë
+int c_mul(int i, int j)
 {
-	glViewport(0, 0, newWidth, newHeight);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluOrtho2D(0.0, GLdouble(newWidth), 0.0, GLdouble(newHeight));
-
-	winWidth = newWidth;
-	winHeight = newHeight;
+	return i * j;
 }
 
-void plotPoint(GLint x, GLint y)
+//³ý
+int c_div(int i, int j)
 {
-	glBegin(GL_POINTS);
-	glVertex2i(x, y);
-	glEnd();
+	return i / j;
 }
 
-void mousePtPlot(GLint button, GLint action, GLint xMouse, GLint yMouse)
+int main(int argc, char **argv)
 {
-	if (button == GLUT_LEFT_BUTTON && action == GLUT_DOWN)
-		plotPoint(xMouse, winHeight - yMouse);
+	int a = 0, b = 0;
+	string op;
+	map<string, int(*)(int, int)> binops;
+	binops.insert({"+",c_add});
+	binops.insert({"-",c_minus});
+	binops.insert({"*",c_mul});
+	binops.insert({"/",c_div});
 
-	glFlush();
+	while (cin >> a >> b >> op)
+	{
+		cout << binops[op](a, b) << endl;
+	}
+
+	return 0;
 }
 
-void main(int argc, char ** argv)
-{
-	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
-	glutInitWindowPosition(100,100);
-	glutInitWindowPosition(winWidth,winHeight);
-
-	glutCreateWindow("Mouse Plot Points");
-
-	init();
-	glutDisplayFunc(displayFcn);
-	glutReshapeFunc(winReshapeFcn);
-	glutMouseFunc(mousePtPlot);
-
-	glutMainLoop();
-}
