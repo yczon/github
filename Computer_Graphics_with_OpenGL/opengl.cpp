@@ -4,6 +4,7 @@
 #include<map>
 #include<string>
 #include<sstream>
+#include<vector>
 
 using namespace std;
 
@@ -39,9 +40,7 @@ void draw()
 GLsizei winWidth = 400, winHeight = 700;
 GLint xRaster = 0, yRaster = 0;
 
-GLubyte label[36] = { '0','.','E',	'E','n','t',	'e','r','1',
-'2','3','4',	'5','6','7',	'b','c','7',
-'8','9','c',	'l','r','+',	'-','*','/' };
+vector<char *> label = {"0.Enter","123+/-","456bc","789clr","+-*/"};
 
 GLint dataValue[12] = { 420,342,324,310,262,185,
 190,196,217,240,312,438 };
@@ -55,7 +54,7 @@ void init(void)
 
 void barChart(void)
 {
-	GLint month, i=0,j=0;
+	GLint i=0,j=0;
 
 	glClear(GL_COLOR_BUFFER_BIT);
 
@@ -65,32 +64,46 @@ void barChart(void)
 	glLineWidth(10);
 
 	//显示按钮
-	for (i = 0;i < 4;++i)
+	for (j = 0;j < 5;++j)
 	{
-		for (j = 0;j < 5;++j)
+		for (i = 0;i < 4;++i)
 		{
-			glPolygonMode(GL_FRONT, GL_LINE);
-			glColor3f(0.0, 0.0, 0.0);
-			glBegin(GL_QUADS);
-				glVertex2i(i*wpButton,j*hpButton);
-				glVertex2i(i*wpButton+wpButton ,j*hpButton);
-				glVertex2i(i*wpButton+wpButton,hpButton + j*hpButton);
-				glVertex2i(i*wpButton,hpButton + j*hpButton);
-			glEnd();
+			if(i == 3 && j==0)
+			{ 
+				glPolygonMode(GL_FRONT, GL_FILL);
+				glColor3f(0.2, 0.2, 0.2);
+				glBegin(GL_QUADS);
+				glVertex2i(i*wpButton, j*hpButton);
+				glVertex2i(i*wpButton + 2*wpButton, j*hpButton);
+				glVertex2i(i*wpButton + 2*wpButton, hpButton + j*hpButton);
+				glVertex2i(i*wpButton, hpButton + j*hpButton);
+				glEnd();
+			}
+			else
+			{
+				glPolygonMode(GL_FRONT, GL_LINE);
+				glColor3f(0.0, 0.0, 0.0);
+				glBegin(GL_QUADS);
+				glVertex2i(i*wpButton, j*hpButton);
+				glVertex2i(i*wpButton + wpButton, j*hpButton);
+				glVertex2i(i*wpButton + wpButton, hpButton + j*hpButton);
+				glVertex2i(i*wpButton, hpButton + j*hpButton);
+				glEnd();
 
-			glPolygonMode(GL_FRONT, GL_FILL);
-			glColor3f(0.1, 0.1, 0.1);
-			glBegin(GL_QUADS);
-				glVertex2i(i*wpButton,j*hpButton);
-				glVertex2i(i*wpButton+wpButton ,j*hpButton);
-				glVertex2i(i*wpButton+wpButton,hpButton + j*hpButton);
-				glVertex2i(i*wpButton,hpButton + j*hpButton);
-			glEnd();
+				glPolygonMode(GL_FRONT, GL_FILL);
+				glColor3f(0.2, 0.2, 0.2);
+				glBegin(GL_QUADS);
+				glVertex2i(i*wpButton, j*hpButton);
+				glVertex2i(i*wpButton + wpButton, j*hpButton);
+				glVertex2i(i*wpButton + wpButton, hpButton + j*hpButton);
+				glVertex2i(i*wpButton, hpButton + j*hpButton);
+				glEnd();
+			}
 		}
 	}
 	//显示区
 	glPolygonMode(GL_FRONT, GL_FILL);
-	glColor3f(0.1, 0.1, 0.1);
+	glColor3f(0.2, 0.2, 0.2);
 	glBegin(GL_QUADS);
 	glVertex2i(0, 5*hpButton+10);
 	glVertex2i(4*wpButton, 5*hpButton+10);
@@ -99,42 +112,51 @@ void barChart(void)
 	glEnd();
 	//数字，操作符
 	glColor3f(1.0, 1.0, 1.0);
-	xRaster = 20;
 
-	for (i = 0;i < 4;++i)
+	xRaster = (wpButton-24)/2;
+	yRaster = (hpButton-24)/2;
+
+	glColor3f(1.0, 1.0, 1.0);
+	for (j = 0;j < 5;++j)
 	{
-		for (j = 0;j < 5;++j)
+		for (i = 0;i < 4;++i)
 		{
-			glPolygonMode(GL_FRONT, GL_LINE);
-			glColor3f(0.0, 0.0, 0.0);
-			glBegin(GL_QUADS);
-			glVertex2i(i*wpButton, j*hpButton);
-			glVertex2i(i*wpButton + wpButton, j*hpButton);
-			glVertex2i(i*wpButton + wpButton, hpButton + j*hpButton);
-			glVertex2i(i*wpButton, hpButton + j*hpButton);
-			glEnd();
-
-			glPolygonMode(GL_FRONT, GL_FILL);
-			glColor3f(0.1, 0.1, 0.1);
-			glBegin(GL_QUADS);
-			glVertex2i(i*wpButton, j*hpButton);
-			glVertex2i(i*wpButton + wpButton, j*hpButton);
-			glVertex2i(i*wpButton + wpButton, hpButton + j*hpButton);
-			glVertex2i(i*wpButton, hpButton + j*hpButton);
-			glEnd();
-
 			//glRasterPos2i(xRaster, yRaster);
-			glColor3f(1.0, 1.0, 1.0);
-			glRasterPos2i(50, 50);
+			//返回字符的宽度
+			xRaster = glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, label[j][i]);
+			glRasterPos2i(i*wpButton+((wpButton-xRaster)/2), j*hpButton+((hpButton-xRaster)/2));
+			if (i == 2 && j == 0)
+			{
+				glRasterPos2i(i*wpButton+((wpButton-xRaster)), j*hpButton+((hpButton-xRaster)/2));
+				for (int k = i;k < strlen(label[j]);++k)
+				{
+					glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, label[j][k]);
+				}
+			}
+			else if (i == 3 && j != 0)
+			{
+				for (int k = i;k < strlen(label[j]);++k)
+				{
+					glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, label[j][k]);
+				}
+			}
+			else
+			{
+				if (i == 3 && j == 0)
+				{
+					glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, ' ');
+				}
+				else
+					glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, label[j][i]);
 
-			glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, label[0]);
+			}
 
-			//xRaster += 50;
 		}
 	}
 
 	glFlush();
 }
+
 void winReshapeFcn(GLint newWidth, GLint newHeight)
 {
 	glMatrixMode(GL_PROJECTION);
@@ -161,7 +183,6 @@ void mousePtPlot(GLint button, GLint action, GLint xMouse, GLint yMouse)
 void main(int argc, char ** argv)
 {
 	// 计算
-
 	int a = 0, b = 0;
 	string op;
 	map<string, int(*)(int, int)> binops;
