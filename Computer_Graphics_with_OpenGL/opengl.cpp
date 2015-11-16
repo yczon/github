@@ -41,11 +41,15 @@ GLsizei winWidth = 400, winHeight = 700;
 GLint xRaster = 0, yRaster = 0;
 
 vector<char *> label = {"0.Enter","123+/-","456bc","789clr","+-*/"};
-vector<GLsizei> x_coor;
-vector<GLsizei> y_coor;
 //每个按钮的宽度跟高度
 GLsizei  wpButton = winWidth / 4;
 GLsizei  hpButton = winHeight / 8;
+
+vector<GLsizei> x_coor = {0,wpButton,2*wpButton,3*wpButton,4*wpButton};
+vector<GLsizei> y_coor = {0,hpButton,2*hpButton,3*hpButton,4*hpButton,5*hpButton,8*hpButton};
+
+int in_num=0;
+int result=0;
 
 GLint dataValue[12] = { 420,342,324,310,262,185,
 190,196,217,240,312,438 };
@@ -170,14 +174,119 @@ void winReshapeFcn(GLint newWidth, GLint newHeight)
 
 void plotPoint(GLint x, GLint y)
 {
-	char * text = "hello wrold";
-	if(x<wpButton && y<hpButton)
-	glRasterPos2i(0, 5*hpButton);
-	for (int i = 0;i < strlen(text);++i)
+	char word=' ';
+	bool back = false;
+	if (x < x_coor[1])
 	{
-		auto text_width = glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, text[i]);
-		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, text[i]);
+		if (y < y_coor[1])
+		{
+			word = '0';
+		}
+		else if (y<y_coor[2])
+		{
+			word = '1';
+		}
+		else if (y<y_coor[3])
+		{
+			word = '4';
+		}
+		else if (y<y_coor[4])
+		{
+			word = '7';
+		}
+		else if (y<y_coor[5])
+		{
+			word = '+';
+		}
 	}
+	else if (x < x_coor[2])
+	{
+		if (y < y_coor[1])
+		{
+			word = '.';
+		}
+		else if (y<y_coor[2])
+		{
+			word = '2';
+		}
+		else if (y<y_coor[3])
+		{
+			word = '5';
+		}
+		else if (y<y_coor[4])
+		{
+			word = '8';
+		}
+		else if (y<y_coor[5])
+		{
+			word = '-';
+		}
+	}
+	else if (x < x_coor[3])
+	{
+		if (y < y_coor[1])
+		{
+			word = '0';    //enter
+		}
+		else if (y<y_coor[2])
+		{
+			word = '3';
+		}
+		else if (y<y_coor[3])
+		{
+			word = '6';
+		}
+		else if (y<y_coor[4])
+		{
+			word = '9';
+		}
+		else if (y<y_coor[5])
+		{
+			word = '*';
+		}
+	}
+	else if (x < x_coor[4])
+	{
+		if (y < y_coor[1])
+		{
+			word = '0';  //enter
+		}
+		else if (y<y_coor[2])
+		{
+			word = '0';  //+/-
+		}
+		else if (y<y_coor[3])
+		{
+			word = char(219);  //bc
+			back = true;
+		}
+		else if (y<y_coor[4])
+		{
+			word = '0';  //clr
+		}
+		else if (y<y_coor[5])
+		{
+			word = '0';  // /
+		}
+	}
+
+	//if(x<wpButton && y<hpButton)
+	static GLsizei bootset = 10;
+
+	GLsizei word_width = glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, word);
+	if(back == true)
+	{ 
+		bootset -= word_width;
+		glRasterPos2i(bootset, 5 * hpButton + (hpButton - word_width) / 2);
+		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, '0');
+	}
+	else
+	{
+		bootset += word_width;
+		glRasterPos2i(bootset, 5 * hpButton + (hpButton - word_width) / 2);
+		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, word);
+	}
+
 
 }
 void mousePtPlot(GLint button, GLint action, GLint xMouse, GLint yMouse)
