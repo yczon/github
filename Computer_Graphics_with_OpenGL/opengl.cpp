@@ -41,6 +41,11 @@ GLsizei winWidth = 400, winHeight = 700;
 GLint xRaster = 0, yRaster = 0;
 
 vector<char *> label = {"0.Enter","123+/-","456bc","789clr","+-*/"};
+vector<GLsizei> x_coor;
+vector<GLsizei> y_coor;
+//每个按钮的宽度跟高度
+GLsizei  wpButton = winWidth / 4;
+GLsizei  hpButton = winHeight / 8;
 
 GLint dataValue[12] = { 420,342,324,310,262,185,
 190,196,217,240,312,438 };
@@ -57,9 +62,6 @@ void barChart(void)
 	GLint i=0,j=0;
 
 	glClear(GL_COLOR_BUFFER_BIT);
-
-	GLsizei  wpButton = winWidth / 4;
-	GLsizei  hpButton = winHeight / 8;
 
 	glLineWidth(10);
 
@@ -168,9 +170,15 @@ void winReshapeFcn(GLint newWidth, GLint newHeight)
 
 void plotPoint(GLint x, GLint y)
 {
-	glBegin(GL_POINTS);
-	glVertex2i(x, y);
-	glEnd();
+	char * text = "hello wrold";
+	if(x<wpButton && y<hpButton)
+	glRasterPos2i(0, 5*hpButton);
+	for (int i = 0;i < strlen(text);++i)
+	{
+		auto text_width = glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, text[i]);
+		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, text[i]);
+	}
+
 }
 void mousePtPlot(GLint button, GLint action, GLint xMouse, GLint yMouse)
 {
@@ -190,17 +198,6 @@ void main(int argc, char ** argv)
 	binops.insert({ "-",c_minus });
 	binops.insert({ "*",c_mul });
 	binops.insert({ "/",c_div });
-
-	// 画图
-	/*
-	draw();
-
-	while (cin >> a >> b >> op)
-	{
-		cout << binops[op](a, b) << endl;
-	}
-	*/
-
 
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
