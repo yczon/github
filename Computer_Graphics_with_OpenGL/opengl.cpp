@@ -172,10 +172,23 @@ void winReshapeFcn(GLint newWidth, GLint newHeight)
 	glClear(GL_COLOR_BUFFER_BIT);
 }
 
+void backOne(GLint x1, GLint y1,GLint x2,GLint y2)
+{
+	glColor3f(0.2, 0.2, 0.2);
+	glRecti(x1,y1,x2,y2);
+	/*
+	glBegin(GL_POINTS);
+	glVertex2i(x, y);
+	glEnd();
+	*/
+}
+
 void plotPoint(GLint x, GLint y)
 {
 	char word=' ';
 	bool back = false;
+	static GLsizei bootset = 10;
+
 	if (x < x_coor[1])
 	{
 		if (y < y_coor[1])
@@ -257,7 +270,8 @@ void plotPoint(GLint x, GLint y)
 		}
 		else if (y<y_coor[3])
 		{
-			word = char(219);  //bc
+			word = '9';  //bc
+			
 			back = true;
 		}
 		else if (y<y_coor[4])
@@ -271,19 +285,19 @@ void plotPoint(GLint x, GLint y)
 	}
 
 	//if(x<wpButton && y<hpButton)
-	static GLsizei bootset = 10;
-
 	GLsizei word_width = glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, word);
-	if(back == true)
-	{ 
-		bootset -= word_width;
-		glRasterPos2i(bootset, 5 * hpButton + (hpButton - word_width) / 2);
-		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, '0');
+	if (back)
+	{
+		backOne(bootset, 5 * hpButton + (hpButton - word_width) / 2, bootset + word_width, 5 * hpButton + (hpButton - word_width) / 2 + 3 * word_width);
+		if(bootset>24)
+			bootset -= word_width;
+		cout <<"back:"<<  bootset << "  " << word << endl;
 	}
 	else
 	{
 		bootset += word_width;
 		glRasterPos2i(bootset, 5 * hpButton + (hpButton - word_width) / 2);
+		cout <<"else:"<< bootset <<"  "<< word << endl;
 		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, word);
 	}
 
@@ -310,7 +324,7 @@ void main(int argc, char ** argv)
 
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
-	glutInitWindowPosition(100, 100);
+	glutInitWindowPosition(0, 0);
 	glutInitWindowSize(winWidth, winHeight);
 	glutCreateWindow("Line Chart Data Plot");
 
