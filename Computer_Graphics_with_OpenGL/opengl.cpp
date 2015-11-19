@@ -5,6 +5,8 @@
 #include<string>
 #include<sstream>
 #include<vector>
+#include<cmath>
+#include<cstdlib>
 
 using namespace std;
 
@@ -48,8 +50,9 @@ GLsizei  hpButton = winHeight / 8;
 vector<GLsizei> x_coor = {0,wpButton,2*wpButton,3*wpButton,4*wpButton};
 vector<GLsizei> y_coor = {0,hpButton,2*hpButton,3*hpButton,4*hpButton,5*hpButton,8*hpButton};
 
-int in_num=0;
-int result=0;
+int result;
+vector<int> num;
+vector<vector<int>> ivec;
 
 GLint dataValue[12] = { 420,342,324,310,262,185,
 190,196,217,240,312,438 };
@@ -134,14 +137,14 @@ void barChart(void)
 			if (i == 2 && j == 0)
 			{
 				glRasterPos2i(i*wpButton+((wpButton-xRaster)), j*hpButton+((hpButton-xRaster)/2));
-				for (int k = i;k < strlen(label[j]);++k)
+				for (size_t k = i;k < strlen(label[j]);++k)
 				{
 					glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, label[j][k]);
 				}
 			}
 			else if (i == 3 && j != 0)
 			{
-				for (int k = i;k < strlen(label[j]);++k)
+				for (size_t k = i;k < strlen(label[j]);++k)
 				{
 					glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, label[j][k]);
 				}
@@ -222,14 +225,14 @@ void press_button(GLint i, GLint j)
 	if (i == 2 && j == 0)
 	{
 		glRasterPos2i(i*wpButton + ((wpButton - xRaster)), j*hpButton + ((hpButton - xRaster) / 2));
-		for (int k = i;k < strlen(label[j]);++k)
+		for (size_t k = i;k < strlen(label[j]);++k)
 		{
 			glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, label[j][k]);
 		}
 	}
 	else if (i == 3 && j != 0)
 	{
-		for (int k = i;k < strlen(label[j]);++k)
+		for (size_t k = i;k < strlen(label[j]);++k)
 		{
 			glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, label[j][k]);
 		}
@@ -245,7 +248,25 @@ void press_button(GLint i, GLint j)
 
 	}
 }
+//ÏÔÊ¾½á¹û
+void show_result(int result)
+{
+	glColor3f(1.0, 1.0, 1.0);
+	char *str = "";
+	int tmp = 0;
+	int aa = 0;
 
+	do	{
+		aa = result % 10;
+		tmp = result / 10;
+		_itoa_s(aa, str, 2,10);
+		xRaster += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, *str);
+		glRasterPos2i(4 * wpButton - xRaster, 6 * hpButton + ((hpButton - xRaster) / 2));
+		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *str);
+	} while (tmp > 10);
+
+	glFlush();
+}
 void plotPoint(GLint x, GLint y)
 {
 	char word=' ';
@@ -259,26 +280,58 @@ void plotPoint(GLint x, GLint y)
 		{
 			word = '0';
 			press_button(0,0);
+			num.push_back(0);
 		}
 		else if (y<y_coor[2])
 		{
 			word = '1';
 			press_button(0,1);
+			num.push_back(1);
 		}
 		else if (y<y_coor[3])
 		{
 			word = '4';
 			press_button(0,2);
+			num.push_back(4);
 		}
 		else if (y<y_coor[4])
 		{
 			word = '7';
 			press_button(0,3);
+			num.push_back(7);
 		}
 		else if (y<y_coor[5])
 		{
 			word = '+';
 			press_button(0,4);
+			auto size = ivec.size();
+			int i = 0;
+			if (size > 1)
+			{
+				for (auto v = ivec[size].rbegin();v != ivec[size].rend();++v)
+				{
+					result += *v + pow(10, i);
+					++i;
+				}
+				i = 0;
+				for (auto v = ivec[size - 1].rbegin();v != ivec[size - 1].rend();++v)
+				{
+					result += *v * pow(10, i);
+					++i;
+				}
+				ivec.pop_back();
+				ivec.pop_back();
+			}
+			else
+			{
+				i = 0;
+				result = 0;
+				for (auto v = ivec[0].rbegin();v != ivec[0].rend();++v)
+				{
+					result += *v * pow(10, i);
+					++i;
+				}
+			}
 		}
 	}
 	else if (x < x_coor[2])
@@ -292,21 +345,52 @@ void plotPoint(GLint x, GLint y)
 		{
 			word = '2';
 			press_button(1,1);
+			num.push_back(2);
 		}
 		else if (y<y_coor[3])
 		{
 			word = '5';
 			press_button(1,2);
+			num.push_back(5);
 		}
 		else if (y<y_coor[4])
 		{
 			word = '8';
 			press_button(1,3);
+			num.push_back(8);
 		}
 		else if (y<y_coor[5])
 		{
 			word = '-';
 			press_button(1,4);
+			auto size = ivec.size();
+			int i = 0;
+			if (size > 1)
+			{
+				for (auto v = ivec[size].rbegin();v != ivec[size].rend();++v)
+				{
+					result += *v + pow(10, i);
+					++i;
+				}
+				i = 0;
+				for (auto v = ivec[size - 1].rbegin();v != ivec[size - 1].rend();++v)
+				{
+					result -= *v * pow(10, i);
+					++i;
+				}
+				ivec.pop_back();
+				ivec.pop_back();
+			}
+			else
+			{
+				i = 0;
+				result = 0;
+				for (auto v = ivec[0].rbegin();v != ivec[0].rend();++v)
+				{
+					result += *v * pow(10, i);
+					++i;
+				}
+			}
 		}
 	}
 	else if (x < x_coor[3])
@@ -320,21 +404,53 @@ void plotPoint(GLint x, GLint y)
 		{
 			word = '3';
 			press_button(2,1);
+			num.push_back(3);
 		}
 		else if (y<y_coor[3])
 		{
 			word = '6';
 			press_button(2,2);
+			num.push_back(6);
 		}
 		else if (y<y_coor[4])
 		{
 			word = '9';
 			press_button(2,3);
+			num.push_back(9);
 		}
 		else if (y<y_coor[5])
 		{
 			word = '*';
 			press_button(2,4);
+			auto size = ivec.size();
+			int i = 0;
+			if (size > 1)
+			{
+				for (auto v = ivec[size].rbegin();v != ivec[size].rend();++v)
+				{
+					result  += *v + pow(10, i);
+					++i;
+				}
+				i = 0;
+				for (auto v = ivec[size-1].rbegin();v != ivec[size-1].rend();++v)
+				{
+					result *= *v * pow(10,i);
+					++i;
+				}
+				ivec.pop_back();
+				ivec.pop_back();
+			}
+			else
+			{
+				i = 0;
+				result = 0;
+				for (auto v = ivec[0].rbegin();v != ivec[0].rend();++v)
+				{
+					result  += *v * pow(10, i);
+					++i;
+				}
+			}
+			show_result(result);
 		}
 	}
 	else if (x < x_coor[4])
@@ -343,6 +459,8 @@ void plotPoint(GLint x, GLint y)
 		{
 			word = '0';  //enter
 			press_button(3,0);
+			ivec.push_back(num);
+			num.clear();
 		}
 		else if (y<y_coor[2])
 		{
@@ -376,7 +494,6 @@ void plotPoint(GLint x, GLint y)
 		backOne(bootset, 5 * hpButton + (hpButton - word_width) / 2, bootset + word_width, 5 * hpButton + (hpButton - word_width) / 2 + 3 * word_width);
 		if(bootset>10)
 			bootset -= word_width;
-		cout <<"back:"<<  bootset << "  " << word << endl;
 	}
 	else if (clear)
 	{
@@ -388,7 +505,6 @@ void plotPoint(GLint x, GLint y)
 		glColor3f(1.0, 1.0, 1.0);
 		bootset += word_width;
 		glRasterPos2i(bootset, 5 * hpButton + (hpButton - word_width) / 2);
-		cout <<"else:"<< bootset <<"  "<< word << endl;
 		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, word);
 	}
 }
@@ -455,14 +571,14 @@ void up_button()
 			if (i == 2 && j == 0)
 			{
 				glRasterPos2i(i*wpButton + ((wpButton - xRaster)), j*hpButton + ((hpButton - xRaster) / 2));
-				for (int k = i;k < strlen(label[j]);++k)
+				for (size_t k = i;k < strlen(label[j]);++k)
 				{
 					glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, label[j][k]);
 				}
 			}
 			else if (i == 3 && j != 0)
 			{
-				for (int k = i;k < strlen(label[j]);++k)
+				for (size_t k = i;k < strlen(label[j]);++k)
 				{
 					glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, label[j][k]);
 				}
