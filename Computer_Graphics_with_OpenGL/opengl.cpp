@@ -5,6 +5,7 @@
 #include<string>
 #include<sstream>
 #include<vector>
+#include<cmath>
 
 using namespace std;
 
@@ -48,8 +49,8 @@ GLsizei  hpButton = winHeight / 8;
 vector<GLsizei> x_coor = {0,wpButton,2*wpButton,3*wpButton,4*wpButton};
 vector<GLsizei> y_coor = {0,hpButton,2*hpButton,3*hpButton,4*hpButton,5*hpButton,8*hpButton};
 
-int in_num=0;
 int result=0;
+static int index = 0;
 
 GLint dataValue[12] = { 420,342,324,310,262,185,
 190,196,217,240,312,438 };
@@ -259,11 +260,14 @@ void plotPoint(GLint x, GLint y)
 		{
 			word = '0';
 			press_button(0,0);
+			++index;
 		}
 		else if (y<y_coor[2])
 		{
 			word = '1';
 			press_button(0,1);
+			
+			++index;
 		}
 		else if (y<y_coor[3])
 		{
