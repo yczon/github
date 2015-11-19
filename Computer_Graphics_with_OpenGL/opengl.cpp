@@ -208,14 +208,29 @@ void press_button(GLint i, GLint j)
 	glVertex2i(i*wpButton, hpButton + j*hpButton);
 	glEnd();
 
-	glPolygonMode(GL_FRONT, GL_FILL);
-	glColor3f(0.4, 0.4, 0.4);
-	glBegin(GL_QUADS);
-	glVertex2i(i*wpButton, j*hpButton);
-	glVertex2i(i*wpButton + wpButton, j*hpButton);
-	glVertex2i(i*wpButton + wpButton, hpButton + j*hpButton);
-	glVertex2i(i*wpButton, hpButton + j*hpButton);
-	glEnd();
+	if (i == 2 && j == 0)
+	{
+		glPolygonMode(GL_FRONT, GL_FILL);
+		glColor3f(0.4, 0.4, 0.4);
+		glBegin(GL_QUADS);
+		glVertex2i(i*wpButton, j*hpButton);
+		glVertex2i(i*wpButton + 2 * wpButton, j*hpButton);
+		glVertex2i(i*wpButton + 2 * wpButton, hpButton + j*hpButton);
+		glVertex2i(i*wpButton, hpButton + j*hpButton);
+		glEnd();
+	}
+	else
+	{
+		glPolygonMode(GL_FRONT, GL_FILL);
+		glColor3f(0.4, 0.4, 0.4);
+		glBegin(GL_QUADS);
+		glVertex2i(i*wpButton, j*hpButton);
+		glVertex2i(i*wpButton + wpButton, j*hpButton);
+		glVertex2i(i*wpButton + wpButton, hpButton + j*hpButton);
+		glVertex2i(i*wpButton, hpButton + j*hpButton);
+		glEnd();
+	}
+
 
 
 
@@ -252,18 +267,35 @@ void press_button(GLint i, GLint j)
 void show_result(int result)
 {
 	glColor3f(1.0, 1.0, 1.0);
-	char *str = "";
-	int tmp = 0;
+	char str[20];
+	int tmp = result;
 	int aa = 0;
-
-	do	{
-		aa = result % 10;
-		tmp = result / 10;
+	do
+	{
+		aa = tmp % 10;
+		tmp = tmp / 10;
 		_itoa_s(aa, str, 2,10);
 		xRaster += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, *str);
-		glRasterPos2i(4 * wpButton - xRaster, 6 * hpButton + ((hpButton - xRaster) / 2));
+		glRasterPos2i(4 * wpButton - xRaster, 6 * hpButton + ((hpButton - 24) / 2));
 		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *str);
-	} while (tmp > 10);
+	} while (tmp != 0);
+
+	glFlush();
+}
+//显示数组
+void show_num(vector<int> num)
+{
+	glColor3f(1.0, 1.0, 1.0);
+	char str[20];
+	int tmp = result;
+	int aa = 0;
+	for (auto i = num.rbegin();i != num.rend();++i)
+	{
+		_itoa_s(*i, str, 2, 10);
+		xRaster += glutBitmapWidth(GLUT_BITMAP_TIMES_ROMAN_24, *str);
+		glRasterPos2i(4 * wpButton - xRaster, 6 * hpButton + ((hpButton - 24) / 2));
+		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *str);
+	}
 
 	glFlush();
 }
@@ -302,7 +334,7 @@ void plotPoint(GLint x, GLint y)
 		}
 		else if (y<y_coor[5])
 		{
-			word = '+';
+			word = ' ';  //加法
 			press_button(0,4);
 			auto size = ivec.size();
 			int i = 0;
@@ -310,7 +342,7 @@ void plotPoint(GLint x, GLint y)
 			{
 				for (auto v = ivec[size].rbegin();v != ivec[size].rend();++v)
 				{
-					result += *v + pow(10, i);
+					result += *v * pow(10, i);
 					++i;
 				}
 				i = 0;
@@ -332,6 +364,7 @@ void plotPoint(GLint x, GLint y)
 					++i;
 				}
 			}
+			show_result(result);
 		}
 	}
 	else if (x < x_coor[2])
@@ -361,7 +394,7 @@ void plotPoint(GLint x, GLint y)
 		}
 		else if (y<y_coor[5])
 		{
-			word = '-';
+			word = ' ';   //减法
 			press_button(1,4);
 			auto size = ivec.size();
 			int i = 0;
@@ -391,14 +424,20 @@ void plotPoint(GLint x, GLint y)
 					++i;
 				}
 			}
+			show_result(result);
+
 		}
 	}
 	else if (x < x_coor[3])
 	{
 		if (y < y_coor[1])
 		{
-			word = '0';    //enter
-			press_button(2,0);
+			word = ' ';  //enter
+			press_button(2, 0);
+			ivec.push_back(num);
+			clear_all(0, 5 * hpButton + (hpButton - 24) / 2, 4 * wpButton, 8 * hpButton);
+			show_num(num);
+			num.clear();
 		}
 		else if (y<y_coor[2])
 		{
@@ -420,7 +459,7 @@ void plotPoint(GLint x, GLint y)
 		}
 		else if (y<y_coor[5])
 		{
-			word = '*';
+			word = ' '; //乘法
 			press_button(2,4);
 			auto size = ivec.size();
 			int i = 0;
@@ -457,33 +496,64 @@ void plotPoint(GLint x, GLint y)
 	{
 		if (y < y_coor[1])
 		{
-			word = '0';  //enter
-			press_button(3,0);
+			word = ' ';  //enter
+			press_button(2, 0);
 			ivec.push_back(num);
+			clear_all(0, 5 * hpButton + (hpButton - 24) / 2, 4 * wpButton, 8 * hpButton);
+			show_num(num);
 			num.clear();
 		}
 		else if (y<y_coor[2])
 		{
-			word = '0';  //+/-
+			word = ' ';  //+/-
 			press_button(3,1);
 		}
 		else if (y<y_coor[3])
 		{
-			word = '9';  //bc
+			word = ' ';  //bc
 			press_button(3,2);
 			
 			back = true;
 		}
 		else if (y<y_coor[4])
 		{
-			word = '9';  //clr
+			word = ' ';  //clr
 			press_button(3,3);
 			clear = true;
 		}
 		else if (y<y_coor[5])
 		{
-			word = '0';  // /
+			word = ' ';  // /   除法
 			press_button(3,4);
+			auto size = ivec.size();
+			int i = 0;
+			if (size > 1)
+			{
+				for (auto v = ivec[size].rbegin();v != ivec[size].rend();++v)
+				{
+					result += *v + pow(10, i);
+					++i;
+				}
+				i = 0;
+				for (auto v = ivec[size - 1].rbegin();v != ivec[size - 1].rend();++v)
+				{
+					result *= *v * pow(10, i);
+					++i;
+				}
+				ivec.pop_back();
+				ivec.pop_back();
+			}
+			else
+			{
+				i = 0;
+				result = 0;
+				for (auto v = ivec[0].rbegin();v != ivec[0].rend();++v)
+				{
+					result += *v * pow(10, i);
+					++i;
+				}
+			}
+			show_result(result);
 		}
 	}
 
