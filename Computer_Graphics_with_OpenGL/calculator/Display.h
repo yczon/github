@@ -183,7 +183,7 @@ void Display::print(std::vector<char> result) {
 void Display::print_v(std::vector<char> result,int h) {
 
 	//相对计算器显示屏的行数
-	int row = 6 + h;
+	int row = 5 + h;
 	glColor3f(1.0, 1.0, 1.0);
 	GLsizei wSize = 0;
 	for (auto v = result.rbegin();v != result.rend(); ++v)
@@ -199,7 +199,7 @@ void Display::enter(std::vector<std::vector<char>> cvec) {
 	//显示前先清理一下屏幕
 
 	clear();
-	int row = 0;
+	int row = 1;
 	for (auto v = cvec.rbegin();v != cvec.rend();++v)
 	{
 		print_v(*v, row);

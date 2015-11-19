@@ -2,13 +2,14 @@
 #include<cmath>
 #include<cstdlib>
 #include<vector>
+#include<iostream>
 
 class Athmetic {
 private:
 	int num1, num2;
 	int vtoi(std::vector<char>);
-	std::vector<char> itov(int);
 public:
+	std::vector<char> itov(int);
 	Athmetic() = default;
 	Athmetic(std::vector<char> a, std::vector<char> b) {
 		num1 = vtoi(a);
@@ -40,15 +41,19 @@ int Athmetic::vtoi(std::vector<char> v) {
 
 	for (auto i : v)
 	{
+		// 会发生隐式转换 char 转 int  '1' = 49
 		result += pow(10, n) * i;
 		++n;
 	}
 
-	return result;
+	return result-48;
 }
 //数字转 vector 数组
 std::vector<char> Athmetic::itov(int i) {
 	std::vector<char> result;
+	std::vector<char> res;
+
+	std::cout << "i:" << i << std::endl;
 	char str[20];
 	int tmp = i;
 	int aa = 0;
@@ -57,8 +62,13 @@ std::vector<char> Athmetic::itov(int i) {
 		aa = tmp % 10;
 		tmp = tmp / 10;
 		_itoa_s(aa, str, 2, 10);
+		std::cout << "aa:" << aa << std::endl;
+		std::cout << "str: " << *str << std::endl;
 		result.push_back(*str);
 	} while (tmp != 0);
 
-	return result;
+	for (auto v = result.rbegin();v != result.rend();++v)
+		res.push_back(*v);
+
+	return res;
 }

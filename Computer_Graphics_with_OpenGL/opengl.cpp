@@ -59,18 +59,47 @@ void mousePtPlot(GLint button, GLint action, GLint xMouse, GLint yMouse)
 			break;
 		case '+':
 			if (ivec.size() > 1){
-				Athmetic counter(ivec[ivec.size()], ivec[ivec.size() - 1]);
-				counter.a_add();
+				Athmetic counter(ivec[ivec.size()-1], ivec[ivec.size() - 2]);
+				int result = counter.a_add();
+				cal.print_v(counter.itov(result),0);
 			}
 			else {
-				cal.print_v(ivec[0],1);
+				cal.clear();
+				cal.print_v(num,0);
 			}
 			break;
 		case '-':
+			if (ivec.size() > 1) {
+				Athmetic counter(ivec[ivec.size() - 1], ivec[ivec.size() - 2]);
+				int result = counter.a_minus();
+				cal.print_v(counter.itov(result), 0);
+			}
+			else {
+				cal.clear();
+				cal.print_v(num, 0);
+			}
 			break;
 		case '*':
+			if (ivec.size() > 1) {
+				Athmetic counter(ivec[ivec.size() - 1], ivec[ivec.size() - 2]);
+				int result = counter.a_mul();
+				cal.print_v(counter.itov(result), 0);
+			}
+			else {
+				cal.clear();
+				cal.print_v(num, 0);
+			}
 			break;
 		case '/':
+			if (ivec.size() > 1) {
+				Athmetic counter(ivec[ivec.size() - 1], ivec[ivec.size() - 2]);
+				int result = counter.a_div();
+				cal.print_v(counter.itov(result), 0);
+			}
+			else {
+				cal.clear();
+				cal.print_v(num, 0);
+			}
 			break;
 		default:
 			num.push_back(coor.w);
