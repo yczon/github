@@ -12,6 +12,7 @@
 #include"calculator/Athmetic.h"
 
 using namespace std;
+int result = 0;
 
 GLsizei winWidth = 400, winHeight = 700;
 
@@ -35,7 +36,54 @@ void winReshapeFcn(GLint newWidth, GLint newHeight)
 
 	glClear(GL_COLOR_BUFFER_BIT);
 }
+//数字转 vector 数组
+vector<char> itov(int i) {
+	std::vector<char> result;
+	std::vector<char> res;
 
+	char str[20];
+	int tmp = 0;
+	bool negative = false;
+	if (i < 0)
+	{
+		tmp = -i;
+		negative = true;
+		result.push_back('-');
+	}
+	else
+		tmp = i;
+	int aa = 0;
+	do
+	{
+		aa = tmp % 10;
+		tmp = tmp / 10;
+		_itoa_s(aa, str, 2, 10);
+		result.push_back(*str);
+	} while (tmp != 0);
+
+	for (auto v = result.rbegin();v != result.rend();++v)
+		res.push_back(*v);
+
+	return res;
+}
+// vector 数组转 数字
+int vtoi(std::vector<char> v) {
+
+	int result = 0;
+	size_t n = 0;
+	int tmp = 0;
+
+	for (auto i = v.rbegin();i != v.rend();++i)
+	{
+		// 会发生隐式转换 char 转 int  '1' = 49
+		tmp = (int)(*i);
+		tmp = tmp - 48;
+		result += pow(10, n) * (tmp);
+		++n;
+	}
+
+	return result;
+}
 void mousePtPlot(GLint button, GLint action, GLint xMouse, GLint yMouse)
 {
 	Axis coor(xMouse,winHeight-yMouse,cal.wButton,cal.hButton);
@@ -56,49 +104,114 @@ void mousePtPlot(GLint button, GLint action, GLint xMouse, GLint yMouse)
 		case 'C':
 			num.clear();
 			cal.clear();
+			result = 0;
 			break;
 		case '+':
-			if (ivec.size() > 1){
-				Athmetic counter(ivec[ivec.size()-1], ivec[ivec.size() - 2]);
-				int result = counter.a_add();
-				cal.print_v(counter.itov(result),0);
+			if (ivec.begin() != ivec.end()){
+				if (num.begin() != num.end()){
+					Athmetic counter(result, vtoi(num));
+					result = counter.a_add();
+					num.clear();
+					cal.clear();
+					cal.print_v(itov(result),0);
+				}
+				else
+				{
+					Athmetic counter(result, vtoi(ivec[ivec.size() - 1]));
+					result = counter.a_add();
+					ivec.pop_back();
+					cal.clear();
+					cal.print_v(itov(result),0);
+				}
 			}
 			else {
 				cal.clear();
-				cal.print_v(num,0);
+				cal.print_v(itov(result),0);
 			}
 			break;
 		case '-':
-			if (ivec.size() > 1) {
-				Athmetic counter(ivec[ivec.size() - 1], ivec[ivec.size() - 2]);
-				int result = counter.a_minus();
-				cal.print_v(counter.itov(result), 0);
+			if (result != 0) {
+				if (num.begin() != num.end()) {
+					Athmetic counter(result, vtoi(num));
+					result = counter.a_minus();
+					num.clear();
+					cal.clear();
+					cal.print_v(itov(result), 0);
+				}
+				else if(ivec.begin()!=ivec.end()){
+					Athmetic counter(result, vtoi(ivec[ivec.size() - 1]));
+					result = counter.a_minus();
+					ivec.pop_back();
+					cal.clear();
+					cal.print_v(itov(result), 0);
+				}
 			}
 			else {
-				cal.clear();
-				cal.print_v(num, 0);
+				if (num.begin() != num.end() && ivec.begin() != ivec.end()) {
+					Athmetic counter(vtoi(ivec[ivec.size() - 1]), vtoi(num));
+					result = counter.a_minus();
+					num.clear();
+					cal.clear();
+					ivec.pop_back();
+					cal.print_v(itov(result), 0);
+				}
+				else if(num.begin()==num.end() && ivec.size()>1){
+					Athmetic counter(vtoi(ivec[ivec.size() - 2]), vtoi(ivec[ivec.size()-1]));
+					result = counter.a_minus();
+					ivec.pop_back();
+					ivec.pop_back();
+					cal.clear();
+					cal.print_v(itov(result), 0);
+				}
 			}
+
 			break;
 		case '*':
-			if (ivec.size() > 1) {
-				Athmetic counter(ivec[ivec.size() - 1], ivec[ivec.size() - 2]);
-				int result = counter.a_mul();
-				cal.print_v(counter.itov(result), 0);
+			if (ivec.begin() != ivec.end()) {
+				if (num.begin() != num.end()) {
+					result = (result == 0 ? 1 : result);
+					Athmetic counter(result, vtoi(num));
+					result = counter.a_mul();
+					num.clear();
+					cal.clear();
+					cal.print_v(itov(result), 0);
+				}
+				else
+				{
+					result = (result == 0 ? 1 : result);
+					Athmetic counter(result, vtoi(ivec[ivec.size() - 1]));
+					result = counter.a_mul();
+					ivec.pop_back();
+					cal.clear();
+					cal.print_v(itov(result), 0);
+				}
 			}
 			else {
 				cal.clear();
-				cal.print_v(num, 0);
+				cal.print_v(itov(result), 0);
 			}
 			break;
 		case '/':
-			if (ivec.size() > 1) {
-				Athmetic counter(ivec[ivec.size() - 1], ivec[ivec.size() - 2]);
-				int result = counter.a_div();
-				cal.print_v(counter.itov(result), 0);
+			if (ivec.begin() != ivec.end()) {
+				if (num.begin() != num.end()) {
+					Athmetic counter(result, vtoi(num));
+					result = counter.a_div();
+					num.clear();
+					cal.clear();
+					cal.print_v(itov(result), 0);
+				}
+				else
+				{
+					Athmetic counter(result, vtoi(ivec[ivec.size() - 1]));
+					result = counter.a_div();
+					ivec.pop_back();
+					cal.clear();
+					cal.print_v(itov(result), 0);
+				}
 			}
 			else {
 				cal.clear();
-				cal.print_v(num, 0);
+				cal.print_v(itov(result), 0);
 			}
 			break;
 		default:
