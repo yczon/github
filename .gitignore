@@ -17,3 +17,9 @@
 /Computer_Graphics_with_OpenGL/stdafx.cpp
 *.suo
 /Computer_Graphics_with_OpenGL/.vs/config/applicationhost.config
+/Computer_Graphics_using_OpenGL_3e/Debug/Computer.7CC65BD5.tlog
+*.log
+*.obj
+*.idb
+*.pdb
+*.pch
