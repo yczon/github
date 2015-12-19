@@ -23,3 +23,5 @@
 *.idb
 *.pdb
 *.pch
+*.TMP
+*.opendb

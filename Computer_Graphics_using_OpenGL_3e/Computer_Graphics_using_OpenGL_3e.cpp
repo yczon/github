@@ -40,15 +40,6 @@ void myDisplay() {
 	glEnd();
 	glFlush();							// 送所有输出到显示设备
 }
-
-//<<<<<<<<<<<<<<<<< drawDot >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void drawDot(GLint x, GLint y)
-{
-	glBegin(GL_POINTS);
-		glVertex2i(x,y);
-	glEnd();
-}
-
 int main(int argc, char **argv)
 {
 	// GLUT 初始化函数
