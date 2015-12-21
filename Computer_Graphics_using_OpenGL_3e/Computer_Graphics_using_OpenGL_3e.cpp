@@ -51,8 +51,8 @@ void myDisplay() {
 	glClear(GL_COLOR_BUFFER_BIT);		// ÇåÆÁ
 	int width = 10;
 	int height = 10;
-	for (int row = 0;row < 50;++row) {
-		for (int col = 0;col < 50;++col) {
+	for (int row = 0;row < 10;++row) {
+		for (int col = 0;col < 10;++col) {
 			if ((col+row)%2==0) {
 				glColor3f(0.2,0.2,0.2);				// Éî»Ò
 			}
@@ -75,13 +75,19 @@ void drawDot(int x,int y)
 //<<<<<<<<<<<<<<<<<< myMouse >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void myMouse(int button, int state, int x, int y)
 {
+	static GLintPoint corner[2];
+	static int numCorners = 0;
 	if (state == GLUT_DOWN) {
 		if (button == GLUT_LEFT_BUTTON) {
-			drawDot(x, screenHeight - y);
+			corner[numCorners].x = x;
+			corner[numCorners].y = screenHeight - y;
+			if (++numCorners == 2) {
+				glRecti(corner[0].x, corner[0].y, corner[1].x, corner[1].y);
+				numCorners = 0;
+			}
 			glFlush();
 		}
 		else if (button == GLUT_RIGHT_BUTTON) {
-			glClearColor(1.0f, 0.0f, 0.0f, 0.0f);		// ºìÉ«
 			glClear(GL_COLOR_BUFFER_BIT);
 			glFlush();
 		}
