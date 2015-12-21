@@ -44,9 +44,22 @@ void lineTo(GLint x, GLint y)
 
 //<<<<<<<<<<<<<<<<<< myDisplay >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void myDisplay() {
+	glClearColor(1.0,1.0,1.0,0.0);		// 设置白色背景
 	glClear(GL_COLOR_BUFFER_BIT);		// 清屏
-	moveTo(40,40);
-	lineTo(70,123);
+	int width = 10;
+	int height = 10;
+	for (int row = 0;row < 10;++row) {
+		for (int col = 0;col < 10;++col) {
+			if ((col+row)%2==0) {
+				glColor3f(0.2,0.2,0.2);				// 深灰
+			}
+			else {
+				glColor3f(0.6,0.6,0.6);				// 浅灰
+			}
+			glRecti(row*width,col*height,width+row*width,height+col*height);
+		}
+	}
+	glFlush();
 }
 int main(int argc, char **argv)
 {
