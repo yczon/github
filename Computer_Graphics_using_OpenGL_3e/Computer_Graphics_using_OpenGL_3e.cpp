@@ -26,18 +26,42 @@ void myInit() {
 	glLoadIdentity();					// 后台将解释
 	gluOrtho2D(0.0, 640.0, 0.0, 480.0);	// 接下来将完整的说明
 }
+
+//<<<<<<<<<<<<<<<<<< hardwiredHouse >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void hardwiredHouse(void)
+{
+	glBegin(GL_LINE_LOOP);			// 画房子的外形
+		glVertex2i(40,40);
+		glVertex2i(40,90);
+		glVertex2i(70,120);
+		glVertex2i(100,90);
+		glVertex2i(100,40);
+	glEnd();
+	glBegin(GL_LINE_STRIP);			// 画烟囱
+		glVertex2i(50, 100);
+		glVertex2i(50, 120);
+		glVertex2i(60, 120);
+		glVertex2i(60, 110);
+	glEnd();
+	glBegin(GL_LINE_STRIP);			// 画门
+		glVertex2i(50,40);
+		glVertex2i(50,75);
+		glVertex2i(65,75);
+		glVertex2i(65,40);
+	glEnd();
+	glBegin(GL_LINE_LOOP);			// 画窗户
+		glVertex2i(80,70);
+		glVertex2i(90,70);
+		glVertex2i(90,80);
+		glVertex2i(80,80);
+	glEnd();
+
+}
+
 //<<<<<<<<<<<<<<<<<< myDisplay >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void myDisplay() {
 	glClear(GL_COLOR_BUFFER_BIT);		// 清屏
-	glBegin(GL_POINTS);					// 画一些点（不知道多少）
-	glVertex2i(289, 190);
-	glVertex2i(320, 128);
-	glVertex2i(239, 67);
-	glVertex2i(194, 101);
-	glVertex2i(129, 83);
-	glVertex2i(75, 73);
-	glVertex2i(20, 10);
-	glEnd();
+	hardwiredHouse();
 	glFlush();							// 送所有输出到显示设备
 }
 int main(int argc, char **argv)
