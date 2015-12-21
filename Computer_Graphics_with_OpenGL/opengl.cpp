@@ -19,7 +19,8 @@ GLsizei winWidth = 400, winHeight = 700;
 Display cal(winWidth,winHeight);
 
 vector<char> num;
-vector<vector<char>> ivec;
+//vector<vector<char>> ivec;
+vector<int> ivec;
 
 void init(void)
 {
@@ -43,12 +44,10 @@ vector<char> itov(int i) {
 
 	char str[20];
 	int tmp = 0;
-	bool negative = false;
 	if (i < 0)
 	{
 		tmp = -i;
-		negative = true;
-		result.push_back('-');
+		res.push_back('-');
 	}
 	else
 		tmp = i;
@@ -61,8 +60,10 @@ vector<char> itov(int i) {
 		result.push_back(*str);
 	} while (tmp != 0);
 
-	for (auto v = result.rbegin();v != result.rend();++v)
+	for (auto v = result.rbegin();v != result.rend();++v) {
 		res.push_back(*v);
+		cout << *v << endl;
+	}
 
 	return res;
 }
@@ -84,6 +85,7 @@ int vtoi(std::vector<char> v) {
 
 	return result;
 }
+
 void mousePtPlot(GLint button, GLint action, GLint xMouse, GLint yMouse)
 {
 	Axis coor(xMouse,winHeight-yMouse,cal.wButton,cal.hButton);
@@ -93,9 +95,9 @@ void mousePtPlot(GLint button, GLint action, GLint xMouse, GLint yMouse)
 		cal.key_down(coor.x1,coor.y1,coor.x2,coor.y2,&coor.w);
 		switch (coor.w) {
 		case 'E':
-			ivec.push_back(num);
+			ivec.push_back(vtoi(num));
 			num.clear();
-			cal.enter(ivec);
+			cal.print_v(num,1);
 			break;
 		case 'B':
 			num.pop_back();
@@ -103,115 +105,104 @@ void mousePtPlot(GLint button, GLint action, GLint xMouse, GLint yMouse)
 			break;
 		case 'C':
 			num.clear();
+			ivec.clear();
 			cal.clear();
 			result = 0;
 			break;
 		case '+':
-			if (ivec.begin() != ivec.end()){
-				if (num.begin() != num.end()){
-					Athmetic counter(result, vtoi(num));
-					result = counter.a_add();
-					num.clear();
-					cal.clear();
-					cal.print_v(itov(result),0);
-				}
-				else
-				{
-					Athmetic counter(result, vtoi(ivec[ivec.size() - 1]));
+			if (num.begin() == num.end()) {
+				if (ivec.size() > 1 && ivec.size() != 1) {
+					Athmetic counter(*(ivec.end() - 2), *(ivec.end() - 1));
 					result = counter.a_add();
 					ivec.pop_back();
+					ivec.pop_back();
+					ivec.push_back(result);
 					cal.clear();
-					cal.print_v(itov(result),0);
+					cal.print_v(itov(result), 0);
 				}
 			}
 			else {
-				cal.clear();
-				cal.print_v(itov(result),0);
+				if (ivec.begin() != ivec.end()) {
+					Athmetic counter(ivec[ivec.size() - 1], vtoi(num));
+					num.clear();
+					result = counter.a_add();
+					ivec.pop_back();
+					ivec.push_back(result);
+					cal.clear();
+					cal.print_v(itov(result), 0);
+				}
 			}
 			break;
 		case '-':
-			if (result != 0) {
-				if (num.begin() != num.end()) {
-					Athmetic counter(result, vtoi(num));
-					result = counter.a_minus();
-					num.clear();
-					cal.clear();
-					cal.print_v(itov(result), 0);
-				}
-				else if(ivec.begin()!=ivec.end()){
-					Athmetic counter(result, vtoi(ivec[ivec.size() - 1]));
+			if (num.begin() == num.end()){
+				if (ivec.size() > 1 && ivec.size() != 1) {
+					Athmetic counter(*(ivec.end()-2), *(ivec.end() - 1));
 					result = counter.a_minus();
 					ivec.pop_back();
+					ivec.pop_back();
+					ivec.push_back(result);
 					cal.clear();
 					cal.print_v(itov(result), 0);
 				}
 			}
 			else {
-				if (num.begin() != num.end() && ivec.begin() != ivec.end()) {
-					Athmetic counter(vtoi(ivec[ivec.size() - 1]), vtoi(num));
-					result = counter.a_minus();
+				if (ivec.begin() != ivec.end()) {
+					Athmetic counter(ivec[ivec.size() - 1], vtoi(num));
 					num.clear();
-					cal.clear();
-					ivec.pop_back();
-					cal.print_v(itov(result), 0);
-				}
-				else if(num.begin()==num.end() && ivec.size()>1){
-					Athmetic counter(vtoi(ivec[ivec.size() - 2]), vtoi(ivec[ivec.size()-1]));
 					result = counter.a_minus();
 					ivec.pop_back();
-					ivec.pop_back();
+					ivec.push_back(result);
 					cal.clear();
 					cal.print_v(itov(result), 0);
 				}
 			}
-
 			break;
 		case '*':
-			if (ivec.begin() != ivec.end()) {
-				if (num.begin() != num.end()) {
-					result = (result == 0 ? 1 : result);
-					Athmetic counter(result, vtoi(num));
-					result = counter.a_mul();
-					num.clear();
-					cal.clear();
-					cal.print_v(itov(result), 0);
-				}
-				else
-				{
-					result = (result == 0 ? 1 : result);
-					Athmetic counter(result, vtoi(ivec[ivec.size() - 1]));
+			if (num.begin() == num.end()) {
+				if (ivec.size() > 1 && ivec.size() != 1) {
+					Athmetic counter(*(ivec.end() - 2), *(ivec.end() - 1));
 					result = counter.a_mul();
 					ivec.pop_back();
+					ivec.pop_back();
+					ivec.push_back(result);
 					cal.clear();
 					cal.print_v(itov(result), 0);
 				}
 			}
 			else {
-				cal.clear();
-				cal.print_v(itov(result), 0);
+				if (ivec.begin() != ivec.end()) {
+					Athmetic counter(ivec[ivec.size() - 1], vtoi(num));
+					num.clear();
+					result = counter.a_mul();
+					ivec.pop_back();
+					ivec.push_back(result);
+					cal.clear();
+					cal.print_v(itov(result), 0);
+				}
 			}
 			break;
 		case '/':
-			if (ivec.begin() != ivec.end()) {
-				if (num.begin() != num.end()) {
-					Athmetic counter(result, vtoi(num));
-					result = counter.a_div();
-					num.clear();
-					cal.clear();
-					cal.print_v(itov(result), 0);
-				}
-				else
-				{
-					Athmetic counter(result, vtoi(ivec[ivec.size() - 1]));
+			if (num.begin() == num.end()) {
+				if (ivec.size() > 1 && ivec.size() != 1) {
+					Athmetic counter(*(ivec.end() - 2), *(ivec.end() - 1));
 					result = counter.a_div();
 					ivec.pop_back();
+					ivec.pop_back();
+					ivec.push_back(result);
 					cal.clear();
 					cal.print_v(itov(result), 0);
 				}
 			}
 			else {
-				cal.clear();
-				cal.print_v(itov(result), 0);
+				if (ivec.begin() != ivec.end()) {
+					Athmetic counter(ivec[ivec.size() - 1], vtoi(num));
+					num.clear();
+					result = counter.a_div();
+					ivec.pop_back();
+					ivec.push_back(result);
+					cal.clear();
+					cal.print_v(itov(result), 0);
+				}
 			}
 			break;
 		default:
