@@ -1,68 +1,144 @@
-// Computer_Graphics_using_OpenGL_3e.cpp : 定义控制台应用程序的入口点。
-//
+/****************************************************************************
 
+A simple GLUT program using the GLUI User Interface Library
+
+This program sets up a checkbox and a spinner, both with live variables.
+No callbacks are used.
+
+-----------------------------------------------------------------------
+
+9/9/98 Paul Rademacher (rademach@cs.unc.edu)
+
+****************************************************************************/
 #include "stdafx.h"
+#include <string.h>
+#include <GL/glut.h>
+#include <GL/glui.h>
 
-#include<GL/glut.h>
-#include<iostream>
+/** These are the live variables passed into GLUI ***/
+int   wireframe = 0;
+int   segments = 8;
+int   main_window;
 
-#define RED 1
-#define GREEN 2
-#define BLUE 3
-#define WHITE 4
 
-const GLdouble screenWidth = 640;
-const GLdouble screenHeight = 480;
+/***************************************** myGlutIdle() ***********/
 
-using namespace std;
-
-float angle = 0.0;
-float red = 1.0, blue = 1.0, green = 1.0;
-
-//<<<<<<<<<<<<<<<<<< myMouse >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void renderScene(void)
-// 画三角形的回调函数
+void myGlutIdle(void)
 {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	/* According to the GLUT specification, the current window is
+	undefined during an idle callback.  So we need to explicitly change
+	it if necessary */
+	if (glutGetWindow() != main_window)
+		glutSetWindow(main_window);
+
+	glutPostRedisplay();
+}
+
+
+/**************************************** myGlutReshape() *************/
+
+void myGlutReshape(int x, int y)
+{
+	float xy_aspect;
+
+	xy_aspect = (float)x / (float)y;
+	glViewport(0, 0, x, y);
+
+	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glRotatef(angle,0.0,1.0,0.0);		// 一点点旋转三角形
-	glColor3f(red, green, blue);		// 改变三角形的颜色
-	glBegin(GL_TRIANGLES);
-	glVertex3f(-0.5,-0.5,0.0);
-	glVertex3f(0.5,0.0,0.0);
-	glVertex3f(0.0,0.5,0.0);
-	glEnd();
-	angle++;
+	glFrustum(-xy_aspect*.08, xy_aspect*.08, -.08, .08, .1, 15.0);
+
+	glutPostRedisplay();
+}
+
+/***************************************** myGlutDisplay() *****************/
+
+void myGlutDisplay(void)
+{
+	static float rotationX = 0.0, rotationY = 0.0;
+
+	glClearColor(.9f, .9f, .9f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	/*** Rotate the object ***/
+	rotationX += 3.3f;
+	rotationY += 4.7f;
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glTranslatef(0.0, 0.0, -1.0);
+	glRotatef(rotationY, 0.0, 1.0, 0.0);
+	glRotatef(rotationX, 1.0, 0.0, 0.0);
+
+	/*** Now we render object, using the variables 'segments' and
+	'wireframe'.  These are _live_ variables, which are transparently
+	updated by GLUI ***/
+
+	if (wireframe)
+		glutWireTorus(.2, .5, 16, segments);
+	else
+		glutSolidTorus(.2, .5, 16, segments);
+
 	glutSwapBuffers();
 }
-//<<<<<<<<<<<<<<<<<< processMenuEvents >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void procesMenuEvents(int option)
-{
-	switch (option) {
-	case RED:red = 1.0; green = 0.0, blue = 0.0; break;
-	case GREEN:red = 0.0; green = 1.0, blue = 0.0; break;
-	case BLUE:red = 0.0; green = 0.0, blue = 1.0; break;
-	case WHITE:red = 1.0; green = 1.0, blue = 1.0; break;
-	}
-}
-//----------------- MAIN ----------------------
-int main(int argc, char **argv)
-{
-	glutInit(&argc, argv);							// 初始化工具包
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);	// 设置显示模式
-	glutInitWindowPosition(100, 100);					// 设置屏幕上窗口位置
-	glutInitWindowSize(screenWidth, screenHeight);	// 设置窗口大小
-	glutCreateWindow("Menu Test");	// 打开带标题的窗口
 
-	glutDisplayFunc(renderScene);						// 注册重画回调函数
-	glutIdleFunc(renderScene);
 
-	glutCreateMenu(procesMenuEvents);				// 调用函数创建菜单
-	glutAddMenuEntry("Red",RED);					// 关联菜单事件
-	glutAddMenuEntry("Blue",BLUE);
-	glutAddMenuEntry("Green",GREEN);
-	glutAddMenuEntry("White",WHITE);
-	glutAttachMenu(GLUT_RIGHT_BUTTON);				// 系在右鼠标按钮上
-	glutMainLoop();									// 进入循环
-	return 0;
+/**************************************** main() ********************/
+
+int main(int argc, char* argv[])
+{
+	/****************************************/
+	/*   Initialize GLUT and create window  */
+	/****************************************/
+
+	glutInit(&argc, argv);
+	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
+	glutInitWindowPosition(50, 50);
+	glutInitWindowSize(300, 300);
+
+	main_window = glutCreateWindow("GLUI Example 1");
+	glutDisplayFunc(myGlutDisplay);
+	glutReshapeFunc(myGlutReshape);
+
+	/****************************************/
+	/*       Set up OpenGL lights           */
+	/****************************************/
+
+	GLfloat light0_ambient[] = { 0.1f, 0.1f, 0.3f, 1.0f };
+	GLfloat light0_diffuse[] = { .6f, .6f, 1.0f, 1.0f };
+	GLfloat light0_position[] = { 1.0f, 1.0f, 1.0f, 0.0f };
+
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+	glLightfv(GL_LIGHT0, GL_AMBIENT, light0_ambient);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, light0_diffuse);
+	glLightfv(GL_LIGHT0, GL_POSITION, light0_position);
+
+	/****************************************/
+	/*          Enable z-buferring          */
+	/****************************************/
+
+	glEnable(GL_DEPTH_TEST);
+
+
+	/****************************************/
+	/*         Here's the GLUI code         */
+	/****************************************/
+
+	GLUI *glui = GLUI_Master.create_glui("GLUI");
+	new GLUI_Checkbox(glui, "Wireframe", &wireframe);
+	(new GLUI_Spinner(glui, "Segments:", &segments))
+		->set_int_limits(3, 60);
+
+	glui->set_main_gfx_window(main_window);
+
+	/* We register the idle callback with GLUI, *not* with GLUT */
+	GLUI_Master.set_glutIdleFunc(myGlutIdle);
+
+	glutMainLoop();
+
+	return EXIT_SUCCESS;
 }
+
+
+
