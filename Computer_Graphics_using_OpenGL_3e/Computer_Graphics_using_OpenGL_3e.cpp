@@ -8,14 +8,6 @@
 
 using namespace std;
 
-void myMouse(int button, int state, int x, int y) {
-}
-void myKeyboard(unsigned char key, int x, int y) {
-
-}
-void myShape(int w, int h) {
-
-}
 //<<<<<<<<<<<<<<<<<<<< myInit >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void myInit() {
 
@@ -27,41 +19,62 @@ void myInit() {
 	gluOrtho2D(0.0, 640.0, 0.0, 480.0);	// 接下来将完整的说明
 }
 
-//<<<<<<<<<<<<<<<<<< hardwiredHouse >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void hardwiredHouse(void)
+struct GLintPoint {
+	GLint x, y;
+};
+
+//<<<<<<<<<<<<<<<<<< parameterizeHouse >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+void parameterizeHouse(GLintPoint peak, GLint width, GLint height)
+// 房子的顶点：peak，给定房子的大小：width,height
 {
-	glBegin(GL_LINE_LOOP);			// 画房子的外形
-		glVertex2i(40,40);
-		glVertex2i(40,90);
-		glVertex2i(70,120);
-		glVertex2i(100,90);
-		glVertex2i(100,40);
+	glBegin(GL_LINE_LOOP);										// 画房子的外形
+	glVertex2i(peak.x, peak.y);
+	glVertex2i(peak.x + width, peak.y);
+	glVertex2i(peak.x + width, peak.y + 5 * height / 8);
+	glVertex2i(peak.x + width / 2, peak.y + height);
+	glVertex2i(peak.x, peak.y + 5 * height / 8);
 	glEnd();
-	glBegin(GL_LINE_STRIP);			// 画烟囱
-		glVertex2i(50, 100);
-		glVertex2i(50, 120);
-		glVertex2i(60, 120);
-		glVertex2i(60, 110);
+
+	glBegin(GL_LINE_STRIP);										// 画烟囱
+	glVertex2i(peak.x + width / 6, peak.y + 6 * height / 8);
+	glVertex2i(peak.x + width / 6, peak.y + height);
+	glVertex2i(peak.x + width / 3, peak.y + height);
+	glVertex2i(peak.x + width / 3, peak.y + 7 * height / 8);
 	glEnd();
-	glBegin(GL_LINE_STRIP);			// 画门
-		glVertex2i(50,40);
-		glVertex2i(50,75);
-		glVertex2i(65,75);
-		glVertex2i(65,40);
+
+	glBegin(GL_LINE_STRIP);										// 画门
+	glVertex2i(peak.x + width / 6, peak.y);
+	glVertex2i(peak.x + width / 6, peak.y + height / 2);
+	glVertex2i(peak.x + width / 3, peak.y + height / 2);
+	glVertex2i(peak.x + width / 3, peak.y);
 	glEnd();
-	glBegin(GL_LINE_LOOP);			// 画窗户
-		glVertex2i(80,70);
-		glVertex2i(90,70);
-		glVertex2i(90,80);
-		glVertex2i(80,80);
+
+
+	glBegin(GL_LINE_LOOP);										// 画窗户
+	glVertex2i(peak.x + 4 * width / 6, peak.y + 4 * height / 8);
+	glVertex2i(peak.x + 5 * width / 6, peak.y + 4 * height / 8);
+	glVertex2i(peak.x + 5 * width / 6, peak.y + 5 * height / 8);
+	glVertex2i(peak.x + 4 * width / 6, peak.y + 5 * height / 8);
 	glEnd();
+
+
 
 }
-
 //<<<<<<<<<<<<<<<<<< myDisplay >>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 void myDisplay() {
+	GLintPoint p;
 	glClear(GL_COLOR_BUFFER_BIT);		// 清屏
-	hardwiredHouse();
+	p.x = 10, p.y = 50;
+	parameterizeHouse(p, 50, 70);
+
+	p.x = 60, p.y = 120;
+	parameterizeHouse(p, 30, 40);
+
+	p.x = 100, p.y = 10;
+	parameterizeHouse(p, 30, 80);
+
+	p.x = 200, p.y = 10;
+	parameterizeHouse(p, 90, 70);
 	glFlush();							// 送所有输出到显示设备
 }
 int main(int argc, char **argv)
