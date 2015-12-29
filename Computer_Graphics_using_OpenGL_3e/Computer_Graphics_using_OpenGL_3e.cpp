@@ -14,80 +14,32 @@ translation controls, and listboxes
 #include <string.h>
 #include <GL/glut.h>
 #include <GL/glui.h>
+#include<random>
 
-const float pi = 3.1415926535358979;
+using namespace std;
 
-
-class GLintPoint {
-public:
-	GLint x, y;
-};
-
-class Point2 {
-public:
-	float x, y;
-	void set(float dx, float dy) {
-		x = dx;
-		y = dy;
-	}
-	void set(Point2 &p) {
-		x = p.x; y = p.y;
-	}
-	Point2(float xx, float yy) {
-		x = xx;
-		y = yy;
-	}
-	Point2() {
-		x = y = 0;
-	}
-};
-
-Point2 currPos;
-Point2 CP;
-void moveTo(Point2 p) 
+void myInit()
 {
-	CP.set(p);
+	glClearColor(1.0,1.0,1.0,0);
+	glMatrixMode(GLUT_SINGLE | GLUT_RGB);
+	glLoadIdentity();
+	gluOrtho2D(0,640,0,480);
 }
-
-void lineTo(Point2 p)
+void myDisplay()
 {
-	glBegin(GL_LINES);
-	glVertex2f(CP.x,CP.y);
-	glVertex2f(p.x,p.y);
+	default_random_engine e;
+	uniform_int_distribution<int> u(0,640);
+	int num = 10000;
+	glClear(GL_COLOR_BUFFER_BIT);
+	glColor3f(0.0,0.0,0.0);
+	glPointSize(4);
+	glBegin(GL_POINTS);
+	for (int i = 0; i < num; ++i) {
+		glVertex2i(u(e),u(e));
+	}
 	glEnd();
 	glFlush();
-	CP.set(p);
 }
-void rosette(int N, float radius)
-{
-	Point2 *pointlist = new Point2[N];
-	GLfloat theta = (2.0f * pi) / N;
-	for (int c = 0; c < N; c++) {
-		pointlist[c].set(radius*sin(theta*c), radius*cos(theta*c));
-	}
-	for (int i = 0; i < N; i++) {
-		for (int j = 0; j < N; j++) {
-			moveTo(pointlist[i]);
-			lineTo(pointlist[j]);
-		}
-	}
-}
-
-void render()
-{
-	glClear(GL_COLOR_BUFFER_BIT);
-	glViewport(10,10,640,480);
-	rosette(5,0.66f);
-	glFlush();
-}
-//<<<<<<<myInit>>>>>>>>>>>>>>>
-void myInit(void)
-{
-	glClear(GL_COLOR_BUFFER_BIT);
-	glClearColor(1.0,0.0,0.0,0.0);
-	glColor3f(0.0f, 0.0f, 1.0f);
-}
-
 //------main------
 void main(int argc, char **argv)
 {
@@ -96,7 +48,7 @@ void main(int argc, char **argv)
 	glutInitWindowSize(640, 480);
 	glutInitWindowPosition(100, 150);
 	glutCreateWindow("The Famous Sinc Function");
-	glutDisplayFunc(render);
+	glutDisplayFunc(myDisplay);
 	myInit();
 	glutMainLoop();
 }
