@@ -17,43 +17,75 @@ translation controls, and listboxes
 
 const float pi = 3.1415926535358979;
 
-//<<<<<<<<<<< setWindow >>>>>>>>>>>>>>
-void setWindow(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top)
-{
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluOrtho2D(left, right, bottom, top);
-}
 
-//<<<<<<<<<<<<<< setViewport >>>>>>>>>>>>>>>
-void setViewport(GLint left, GLint right, GLint bottom, GLint top)
-{
-	glViewport(left,bottom,right-left,top-bottom);
-}
+class GLintPoint {
+public:
+	GLint x, y;
+};
 
-//<<<<<<<<<<<<<myDispaly >>>>>>>>>>>>
-void myDisplay(void)
-{
-	glClear(GL_COLOR_BUFFER_BIT);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	glBegin(GL_LINE_STRIP);
-	for (float x = -4.0; x < 4.0; x += 0.1) {
-		if (x == 0.0)
-			glVertex2f(0.0, 1.0);
-		else
-			glVertex2f(x,sin(3.14159*x)/(3.14159*x));
+class Point2 {
+public:
+	float x, y;
+	void set(float dx, float dy) {
+		x = dx;
+		y = dy;
 	}
+	void set(Point2 &p) {
+		x = p.x; y = p.y;
+	}
+	Point2(float xx, float yy) {
+		x = xx;
+		y = yy;
+	}
+	Point2() {
+		x = y = 0;
+	}
+};
+
+Point2 currPos;
+Point2 CP;
+void moveTo(Point2 p) 
+{
+	CP.set(p);
+}
+
+void lineTo(Point2 p)
+{
+	glBegin(GL_LINES);
+	glVertex2f(CP.x,CP.y);
+	glVertex2f(p.x,p.y);
 	glEnd();
 	glFlush();
+	CP.set(p);
+}
+void rosette(int N, float radius)
+{
+	Point2 *pointlist = new Point2[N];
+	GLfloat theta = (2.0f * pi) / N;
+	for (int c = 0; c < N; c++) {
+		pointlist[c].set(radius*sin(theta*c), radius*cos(theta*c));
+	}
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			moveTo(pointlist[i]);
+			lineTo(pointlist[j]);
+		}
+	}
 }
 
+void render()
+{
+	glClear(GL_COLOR_BUFFER_BIT);
+	glViewport(10,10,640,480);
+	rosette(5,0.66f);
+	glFlush();
+}
 //<<<<<<<myInit>>>>>>>>>>>>>>>
 void myInit(void)
 {
-	glClearColor(1.0,1.0,1.0,0.0);
+	glClear(GL_COLOR_BUFFER_BIT);
+	glClearColor(1.0,0.0,0.0,0.0);
 	glColor3f(0.0f, 0.0f, 1.0f);
-	glLineWidth(2.0);
 }
 
 //------main------
@@ -64,9 +96,7 @@ void main(int argc, char **argv)
 	glutInitWindowSize(640, 480);
 	glutInitWindowPosition(100, 150);
 	glutCreateWindow("The Famous Sinc Function");
-	glutDisplayFunc(myDisplay);
+	glutDisplayFunc(render);
 	myInit();
-	setWindow(-0.5,5.0,-0.3,1.0);
-	setViewport(0,640,0,480);
 	glutMainLoop();
 }
