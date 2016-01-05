@@ -15,6 +15,7 @@ translation controls, and listboxes
 #include <GL/glut.h>
 #include <GL/glui.h>
 #include<random>
+#include<iostream>
 
 using namespace std;
 
@@ -27,15 +28,22 @@ void myInit()
 }
 void myDisplay()
 {
-	default_random_engine e;
-	uniform_int_distribution<int> u(0,640);
-	int num = 10000;
+	unsigned long x = 12345567879;
+	unsigned long k = 0;
+	
 	glClear(GL_COLOR_BUFFER_BIT);
 	glColor3f(0.0,0.0,0.0);
 	glPointSize(4);
 	glBegin(GL_POINTS);
-	for (int i = 0; i < num; ++i) {
-		glVertex2i(u(e),u(e));
+	while(x!=1) {
+		++k;
+		if (x % 2 == 0) {
+			x = x / 2;
+		}
+		else {
+			x = 3 * x + 1;
+		}
+		glVertex2d(k,x);
 	}
 	glEnd();
 	glFlush();
