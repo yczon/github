@@ -28,22 +28,17 @@ void myInit()
 }
 void myDisplay()
 {
-	unsigned long x = 12345567879;
-	unsigned long k = 0;
+	unsigned long x = 1;
+	unsigned long y = 1;
 	
 	glClear(GL_COLOR_BUFFER_BIT);
 	glColor3f(0.0,0.0,0.0);
-	glPointSize(4);
+	glPointSize(1);
 	glBegin(GL_POINTS);
-	while(x!=1) {
-		++k;
-		if (x % 2 == 0) {
-			x = x / 2;
-		}
-		else {
-			x = 3 * x + 1;
-		}
-		glVertex2d(k,x);
+	for (int i = 0; i < 2000; ++i) {
+		y = x;
+		x = 40 * (1 + 2 * 3) - y + x - 3 * 40;
+		glVertex2i(x,y);
 	}
 	glEnd();
 	glFlush();
