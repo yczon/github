@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include"OpenglDraw.h"
 
 void lineTo(GLint x, GLint y);

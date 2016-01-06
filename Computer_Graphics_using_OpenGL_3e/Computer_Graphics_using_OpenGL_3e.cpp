@@ -11,46 +11,46 @@ translation controls, and listboxes
 
 ****************************************************************************/
 #include "stdafx.h"
-#include <string.h>
-#include <GL/glut.h>
-#include <GL/glui.h>
-#include<random>
-#include<iostream>
-#include<vector>
-#include<fstream>
-#include<cmath>
-
-const double FAI = (1 + sqrt(5)) / 2;
+#include"OpenglDraw.h"
 
 using namespace std;
 
+void setWindow(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top)
+{
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluOrtho2D(left,right,bottom,top);
+}
+
+void setViewport(GLint left, GLint right, GLint bottom, GLint top)
+{
+	glViewport(left,bottom,right-left,top-bottom);
+}
+
 void myDisplay(void)
 {
-	int x = 100;
-	int y = 200;
 	glClear(GL_COLOR_BUFFER_BIT);
-	glColor3f(0.0f, 1.0f, 0.0f);
-	glPointSize(1);
-	y = FAI * x;
-	for (int i = 0;i < 2;++i) {
-		glBegin(GL_LINE_LOOP);
-		glVertex2i(10,10);
-		glVertex2i(x+10,10);
-		glVertex2i(x+10,y+10);
-		glVertex2i(10,y+10);
-		glEnd();
-		y = y - x;
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glBegin(GL_LINE_STRIP);
+	for (float x = -4.0;x < 4.0;x += 0.1)
+	{
+		if (x == 0.0) {
+			glVertex2f(0.0,1.0);
+		}
+		else {
+			glVertex2f(x,sin(PI*x)/(PI*x));
+		}
 	}
+	glEnd();
 	glFlush();
 }
 
 void myInit(void)
 {
 	glClearColor(0.0, 0.0, 0.0, 0.0);
-	glColor3f(0.0f, 0.0f, 0.0f);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluOrtho2D(0, 640, 0, 480);
+	setColor("BLUE");
+	glLineWidth(2);
 }
 
 int main(int argc, char** argv)
@@ -62,5 +62,7 @@ int main(int argc, char** argv)
 	glutCreateWindow("MyDimo");
 	glutDisplayFunc(myDisplay);
 	myInit();
+	setWindow(-5.0,5.0,-0.3,1.0);
+	setViewport(0,640,0,480);
 	glutMainLoop();
 }
