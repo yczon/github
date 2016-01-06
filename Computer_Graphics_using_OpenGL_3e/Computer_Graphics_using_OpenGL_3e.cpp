@@ -79,45 +79,23 @@ void hexSwirl() {
 // <<<<<<<<<<<<<< myDisplay >>>>>>>>>>>>>>>>>>>
 void myDisplay(void)
 {
-	float cx = 0.3, cy = 0.2;
-	float H, W = 1.2, aspect = 0.7;
-	int NumFrames = 24;
-	setViewport(0,640,0,480);
-
-	//setWindow(100,200,100,200);
-	//for (int frame = 0; frame < NumFrames; frame++) {
-	//	glClear(GL_COLOR_BUFFER_BIT);
-	//	glColor3f(0.7,0.7,0.7);
-	//	W *= 0.7;
-	//	H = W * aspect;
-	//	setWindow(cx-W,cx+W,cy-H,cy+H);
-	//	hexSwirl();
-	//	glFlush();
-	//}
-	int x = 100;
-	int y = 100;
-	int w = 1;
-	int h = 1;
-	int center_x = w / 2;
-	int center_y = h / 2;
-
-	for (int i = 1; i < 10; i++) {
-		for (long a = 0; a < 200000000; a++) {}
-		glClear(GL_COLOR_BUFFER_BIT);
-		glColor3f(1, 0, 0);
-		w = 640 / i;
-		h = 480 / i;
-		center_x = w / 2;
-		center_y = h / 2;
-		setWindow(0, w, 0, h);
-		glBegin(GL_LINE_LOOP);
-			glVertex2i(center_x-10, center_y-10);
-			glVertex2i(center_x+10, center_y-10);
-			glVertex2i(center_x+10, center_y+10);
-			glVertex2i(center_x-10, center_y+10);
-		glEnd();
-		glFlush();
-		cout << "hello" << endl;
+	glClear(GL_COLOR_BUFFER_BIT);
+	glColor3f(1,0,0);
+	setWindow(-0.6, 0.6, -0.6, -0.6);
+	for (int i = 0; i < 5; i++) {
+		for (int j = 0; j < 4; j++) {
+			int L = 80;
+			//setViewport(i*L,L+i*L,j*L,L+j*L);
+			glClear(GL_COLOR_BUFFER_BIT);
+			glColor3f(1, 0, 0);
+			glBegin(GL_LINE_LOOP);
+			glVertex2i(10, 10);
+			glVertex2i(100, 10);
+			glVertex2i(100, 100);
+			glVertex2i(10, 100);
+			glEnd();
+			glFlush();
+		}
 	}
 }
 
