@@ -15,6 +15,11 @@ translation controls, and listboxes
 
 using namespace std;
 
+typedef vector<GLPoint> Polygon;
+typedef vector<Polygon> PolyLines;
+PolyLines dimo;
+
+//<<<<<<<<<<<<<<<<<< setWindow >>>>>>>>>>>>>>>>>>>
 void setWindow(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top)
 {
 	glMatrixMode(GL_PROJECTION);
@@ -22,35 +27,68 @@ void setWindow(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top)
 	gluOrtho2D(left,right,bottom,top);
 }
 
-void setViewport(GLint left, GLint right, GLint bottom, GLint top)
+//<<<<<<<<<<<<<<<<<< setViewport >>>>>>>>>>>>>>>>>>>
+void setViewport(GLint left, GLdouble right, GLdouble bottom, GLdouble top)
 {
 	glViewport(left,bottom,right-left,top-bottom);
+}
+
+void loadData(char * fileName)
+{
+	ifstream inStream;
+	inStream.open(fileName);
+	if (inStream.fail())
+	{
+		cout << "can not open file :" << fileName << endl;
+		return;
+	}
+	GLint numPolygon, numPolyLines;
+	GLPoint currentPoint;
+	inStream >> numPolyLines;
+	Polygon currentPolygon;
+	for (int i = 0; i < numPolyLines;i++)
+	{
+		inStream >> numPolygon;
+		currentPolygon.clear();
+		for (int j = 0;j<numPolygon;j++)
+		{
+			inStream >> currentPoint.x >> currentPoint.y;
+			currentPolygon.push_back(currentPoint);
+		}
+		dimo.push_back(currentPolygon);
+	}
+	inStream.close();
+	cout << "read file: " << fileName << "success!" << endl;
 }
 
 void myDisplay(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	glBegin(GL_LINE_STRIP);
-	for (float x = -4.0;x < 4.0;x += 0.1)
-	{
-		if (x == 0.0) {
-			glVertex2f(0.0,1.0);
-		}
-		else {
-			glVertex2f(x,sin(PI*x)/(PI*x));
+	glColor3f(0.0f, 1.0f, 0.0f);
+	for (int col = 0;col < 5;col++) {
+		for (int row = 0;row < 5;row++) {
+			for (int i = 0;i < dimo.size();i++)
+			{
+				glViewport(col * 64, row * 44, 64, 44);
+
+				glBegin(GL_LINE_STRIP);
+				for (int j = 0;j < dimo[i].size();j++)
+				{
+					glVertex2i(dimo[i][j].x, dimo[i][j].y);
+				}
+				glEnd();
+			}
 		}
 	}
-	glEnd();
 	glFlush();
 }
 
 void myInit(void)
 {
 	glClearColor(0.0, 0.0, 0.0, 0.0);
-	setColor("BLUE");
-	glLineWidth(2);
+	glColor3f(0.0f, 1.0f, 0.0f);
+	setWindow(0,640,0,480);
+	loadData("./Chp_02/dino.dat");
 }
 
 int main(int argc, char** argv)
@@ -62,7 +100,5 @@ int main(int argc, char** argv)
 	glutCreateWindow("MyDimo");
 	glutDisplayFunc(myDisplay);
 	myInit();
-	setWindow(-5.0,5.0,-0.3,1.0);
-	setViewport(0,640,0,480);
 	glutMainLoop();
 }
