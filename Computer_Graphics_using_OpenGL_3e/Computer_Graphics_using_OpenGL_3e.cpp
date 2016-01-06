@@ -61,23 +61,33 @@ void loadData(char * fileName)
 	cout << "read file: " << fileName << "success!" << endl;
 }
 
+// <<<<<<<<<< »­¿ÖÁú >>>>>>>>>>>>>>
+void drawPolylineFile(void)
+{
+	for (int i = 0; i < dimo.size(); i++)
+	{
+		glBegin(GL_LINE_STRIP);
+		for (int j = 0; j < dimo[i].size(); j++)
+		{
+			glVertex2i(dimo[i][j].x, dimo[i][j].y);
+		}
+		glEnd();
+	}
+}
 void myDisplay(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT);
 	glColor3f(0.0f, 1.0f, 0.0f);
 	for (int col = 0;col < 5;col++) {
 		for (int row = 0;row < 5;row++) {
-			for (int i = 0;i < dimo.size();i++)
-			{
-				glViewport(col * 64, row * 44, 64, 44);
-
-				glBegin(GL_LINE_STRIP);
-				for (int j = 0;j < dimo[i].size();j++)
-				{
-					glVertex2i(dimo[i][j].x, dimo[i][j].y);
-				}
-				glEnd();
+			if ((col + row) % 2 == 0) {
+				setWindow(0.0, 640.0, 0.0, 440.0);
 			}
+			else {
+				setWindow(0.0, 640.0, 440.0, 0.0);
+			}
+			glViewport(col * 64, row * 44, 64, 44);
+			drawPolylineFile();
 		}
 	}
 	glFlush();
