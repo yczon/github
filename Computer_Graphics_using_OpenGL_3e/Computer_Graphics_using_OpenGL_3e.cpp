@@ -65,8 +65,8 @@ void myDisplay(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT);
 	glColor3f(0.0f, 1.0f, 0.0f);
-	for (int col = 0;col < 5;col++) {
-		for (int row = 0;row < 5;row++) {
+	for (int col = 0;col < 5;col++) {                     //平铺的列
+		for (int row = 0;row < 5;row++) {				//行
 			for (int i = 0;i < dimo.size();i++)
 			{
 				glViewport(col * 64, row * 44, 64, 44);
