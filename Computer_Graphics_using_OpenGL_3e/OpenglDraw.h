@@ -12,11 +12,30 @@
 const float FAI = 1.61803398874989; //(1 + sqrt(5)) / 2 ¦µ»Æ½ð·Ö¸îÊý
 const float PI  = 3.14159265358979;  
 
-struct GLPoint {
+class GLPoint {
+public:
 	GLfloat x, y;
+
+	void set(float dx, float dy) {
+		x = dx;
+		y = dy;
+	}
+
+	void set(GLPoint &p) {
+		x = p.x; y = p.y;
+	}
+	GLPoint(GLfloat xx, GLfloat yy) {
+		x = xx;
+		y = yy;
+	}
+	GLPoint() {
+		x = y = 0;
+	}
+
 };
 
-struct GLLine {
+class GLLine {
+public:
 	GLPoint CP;
 
 	GLLine(GLint x1, GLint y1)
@@ -36,8 +55,8 @@ struct GLLine {
 	void lineTo(GLint x, GLint y)
 	{
 		glBegin(GL_LINES);
-		glVertex2i(CP.x,CP.y);
-		glVertex2i(x,y);
+			glVertex2i(CP.x,CP.y);
+			glVertex2i(x,y);
 		glEnd();
 		glFlush();
 		CP.x = x;
