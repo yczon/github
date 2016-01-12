@@ -11,6 +11,7 @@
 
 const float FAI = 1.61803398874989; //(1 + sqrt(5)) / 2 ¦µ»Æ½ð·Ö¸îÊý
 const float PI  = 3.14159265358979;  
+const float TWOPI  = 2 * 3.14159265358979;  
 
 class GLPoint {
 public:

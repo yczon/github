@@ -12,8 +12,8 @@ void moveTo(GLPoint p)
 void lineTo(GLPoint p)
 {
 	glBegin(GL_LINES);
-		glVertex2f(CP.x, CP.y);
-		glVertex2f(p.x, p.y);
+	glVertex2f(CP.x, CP.y);
+	glVertex2f(p.x, p.y);
 	glEnd();
 	glFlush();
 	CP.set(p);
@@ -31,13 +31,26 @@ void rosette(int N, float radius)
 			lineTo(pointlist[j]);
 		}
 	}
+
+	radius = radius / 2;
+	GLPoint *pointlist2 = new GLPoint[N];
+	for (int c = 0; c < N; c++) {
+		pointlist2[c].set(radius*sin(theta*c), radius*cos(theta*c));
+	}
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			moveTo(pointlist2[i]);
+			lineTo(pointlist2[j]);
+		}
+	}
+
 }
 
 void render()
 {
 	glClear(GL_COLOR_BUFFER_BIT);
-	glViewport(10, 10, 640, 480);
-	rosette(5, 0.66f);
+	glViewport(0, 0, 600, 600);
+	rosette(3, 0.66f);
 	glFlush();
 }
 //<<<<<<<myInit>>>>>>>>>>>>>>>
@@ -53,7 +66,7 @@ void main(int argc, char **argv)
 {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
-	glutInitWindowSize(640, 480);
+	glutInitWindowSize(600, 600);
 	glutInitWindowPosition(100, 150);
 	glutCreateWindow("The Famous Sinc Function");
 	glutDisplayFunc(render);
