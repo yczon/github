@@ -21,6 +21,19 @@ void drawLine(GLint x1, GLint y1, GLint x2, GLint y2)
 	glEnd();
 }
 
+//---------------------- »­Ô² -----------------------------//
+void drawCircle(GLfloat radius)
+{
+	glBegin(GL_LINES);
+	GLfloat x, y;
+	for (GLfloat i = 0;i < TWOPI;i += 0.1) {
+		x = radius*cos(i);
+		y = radius*sin(i);
+		glVertex2i(x,y);
+	}
+	glEnd();
+}
+
 //---------------------- ÉèÖÃÇ°¾°É« -----------------------------//
 void setColor(const std::string cl)
 {

@@ -22,36 +22,38 @@ void lineTo(GLPoint p)
 void rosette(int N, float radius)
 {
 	GLPoint *pointlist = new GLPoint[N];
-	GLPoint center;
-	GLPoint tmp;
-	center.set(0,0);
 	GLfloat theta = (2.0f * PI) / N;
 	for (int c = 0; c < N; c++) {
-		pointlist[c].set(radius*sin(theta*c+PI), radius*cos(theta*c+PI));
+		pointlist[c].set(radius*sin(theta*c), radius*cos(theta*c));
 	}
 
-	moveTo(pointlist[1]);
-	tmp.set(pointlist[1].x,pointlist[1].y+pointlist[0].y);
-	lineTo(tmp);
+	GLfloat r = 0.1*radius;
+	GLfloat angle = theta / 2;
+	GLPoint *pointlist2 = new GLPoint[N];
+	for (int c = 0; c < N; c++) {
+		pointlist2[c].set(r*sin(theta*c + angle), r*cos(theta*c + angle));
+	}
 
-	lineTo(pointlist[0]);
+	for (int j = 0;j < N-1;++j) {
+		moveTo(pointlist2[j]);
+		lineTo(pointlist[j]);
+		moveTo(pointlist[j+1]);
+		lineTo(pointlist2[j]);
+	}
+	moveTo(pointlist2[N-1]);
+	lineTo(pointlist[N-1]);
+	moveTo(pointlist[0]);
+	lineTo(pointlist2[N-1]);;
 
-	tmp.set(pointlist[2].x,pointlist[0].y+pointlist[2].y);
-	lineTo(tmp);
 
-	lineTo(pointlist[2]);
-
-	lineTo(center);
-
-	lineTo(pointlist[1]);
 }
 
 void render()
 {
 	glClear(GL_COLOR_BUFFER_BIT);
 	glViewport(0, 0, 600, 600);
-	float R = 0.33f;
-	rosette(3, R);
+	float R = 0.66f;
+	rosette(7, R);
 	glFlush();
 }
 //<<<<<<<myInit>>>>>>>>>>>>>>>

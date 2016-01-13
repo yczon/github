@@ -68,3 +68,4 @@ public:
 void setColor(const std::string);
 void drawDot(GLint x,GLint y);
 void drawLine(GLint x1,GLint y1,GLint x2,GLint y2);
+void drawCircle(GLfloat radius);
