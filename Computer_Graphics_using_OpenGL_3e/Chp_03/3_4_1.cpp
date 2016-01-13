@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include"OpenglDraw.h"
 
-using namespace std;
 GLPoint currPos;
 GLPoint CP;
 
@@ -23,48 +22,31 @@ void rosette(int N, float radius)
 {
 	GLPoint *pointlist = new GLPoint[N];
 	GLfloat theta = (2.0f * PI) / N;
+	GLfloat angle = theta / 2;
 	for (int c = 0; c < N; c++) {
 		pointlist[c].set(radius*sin(theta*c), radius*cos(theta*c));
 	}
 
-	for (int j = 0;j < N;++j) {
-		for (int i = 0; i < N - 1; i++) {
-			moveTo(pointlist[j]);
-			lineTo(pointlist[i]);
-		}
+	for (int i = 0; i < N-1; i++) {
+		moveTo(pointlist[i]);
+		lineTo(pointlist[i+1]);
 	}
-
-	radius = (FAI - 1)*radius;
-	GLfloat angle = theta / 2;
-	GLPoint *pointlist2 = new GLPoint[N];
-	GLfloat r = (radius*sin(angle/2)) / sin((PI/180)*150);
-	for (int c = 0; c < N; c++) {
-		pointlist2[c].set(r*sin(theta*c+angle), r*cos(theta*c+angle));
-	}
-
-	for (int j = 0;j < N;++j) {
-		for (int i = 0; i < N - 1; i++) {
-			moveTo(pointlist2[j]);
-			lineTo(pointlist2[i]);
-		}
-	}
-
+	lineTo(pointlist[0]);
 }
 
 void render()
 {
 	glClear(GL_COLOR_BUFFER_BIT);
 	glViewport(0, 0, 600, 600);
-	float R = 0.66f;
-	rosette(5, R);
+	rosette(3, 0.66f);
 	glFlush();
 }
 //<<<<<<<myInit>>>>>>>>>>>>>>>
 void myInit(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT);
-	glClearColor(0.7, 0.7, 0.7, 0.0);
-	setColor(string("grey"));
+	glClearColor(0.0, 0.0, 0.0, 0.0);
+	glColor3f(0.0f, 0.0f, 1.0f);
 }
 
 //------main------
