@@ -51,10 +51,13 @@ void myDisplay(void)
 {
 	float delT = 0.1;
 
-	for (float t=.0;t <= 1;t += delT) {
-		for (int i = 0;i < 200000000;i++) {}
+	for (float t=0.1; ;t += delT) {
+		for (int i = 0;i < 200000000;i++) {}  // ÑÓÊ±
 		glClear(GL_COLOR_BUFFER_BIT);
-		drawTween(A,B,10,t);
+		drawTween(A,B,10,t);				  // ÄÚ²å
+		if (t >= 1.0 || t <= 0.0) {			  // ÖØ¸´
+			delT = -delT;
+		}
 	}
 	glFlush();
 }
