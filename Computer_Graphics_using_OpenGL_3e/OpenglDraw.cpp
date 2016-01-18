@@ -72,3 +72,19 @@ void setColor(const std::string cl)
 		glColor3f(1.0,0.0,1.0);
 	}
 }
+
+//-------------------- 线性插值(返回a和b之间的比例t处的值) ----------------------// 
+float lerp(float a, float b, float t)
+{
+	return a + (b - a)*t;
+}
+//-------------------- 内插(返回点A和B之间的比例t处的点P(t)) ----------------------// 
+//-------------------- 这个点一般也叫做点A和点B在比例t处的内插 ---------------------//
+GLPoint tween(GLPoint A, GLPoint B, float t)
+{
+	GLPoint T;
+	T.x = lerp(A.x,B.x,t);
+	T.y = lerp(A.y,B.y,t);
+	return T;
+}
+

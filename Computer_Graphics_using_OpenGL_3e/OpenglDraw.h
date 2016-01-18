@@ -69,3 +69,5 @@ void setColor(const std::string);
 void drawDot(GLint x,GLint y);
 void drawLine(GLint x1,GLint y1,GLint x2,GLint y2);
 void drawCircle(GLfloat radius);
+float lerp(float a, float b, float t);
+GLPoint tween(GLPoint A,  GLPoint B, float t);
