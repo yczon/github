@@ -1,75 +1,69 @@
 #include "stdafx.h"
 #include"OpenglDraw.h"
 
+#include<fstream>
+#include<sstream>
+#include<vector>
+#include<iomanip>
 using namespace std;
-GLPoint currPos;
-GLPoint CP;
 
-void moveTo(GLPoint p)
-{
-	CP.set(p);
-}
-
-void lineTo(GLPoint p)
-{
-	glBegin(GL_LINES);
-	glVertex2f(CP.x, CP.y);
-	glVertex2f(p.x, p.y);
-	glEnd();
-	glFlush();
-	CP.set(p);
-}
-
-GLPoint A[] = { {10,10},{10,60},{40,90},{70,60},{70,10},{50,10},{50,30},{30,30},{30,10},{10,10} };
-GLPoint B[] = { {30,10},{30,40},{10,40},{10,60},{40,90},{70,60},{70,40},{50,40},{50,10},{30,10} };
-void drawTween(GLPoint A[], GLPoint B[], int n, float t)
-{
-	for (int i = 0;i < n;i++) {
-		GLPoint P;
-		P = tween(A[i], B[i], t);
-		if (i == 0) {
-			moveTo(P);
-		}
-		else {
-			lineTo(P);
-		}
-	}
-}
-
-void myInit() {
-
-	glClearColor(1.0, 1.0, 1.0, 0.0);		// 设置背景颜色为白色
-	glColor3f(0.0f, 0.0f, 0.0f);			// 设置绘图颜色为黑色
-	glPointSize(2.0);						// 设置点的大小为4x4像素
-	glMatrixMode(GL_PROJECTION);			// 设置合适的矩阵
-	glLoadIdentity();						// 后台将解释
-	gluOrtho2D(0.0, 640, 0.0, 480);			// 接下来将完整的说明
-}
-
-//<<<<<<<<<<<<<<<<<<<< myDisplay >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void myDisplay(void)
-{
-	float delT = 0.1;
-
-	for (float t=0.1; ;t += delT) {
-		for (int i = 0;i < 200000000;i++) {}  // 延时
-		glClear(GL_COLOR_BUFFER_BIT);
-		drawTween(A,B,10,t);				  // 内插
-		if (t >= 1.0 || t <= 0.0) {			  // 重复
-			delT = -delT;
-		}
-	}
-	glFlush();
-}
 //------main------
 void main(int argc, char **argv)
 {
-	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
-	glutInitWindowSize(640, 480);
-	glutInitWindowPosition(100, 150);
-	glutCreateWindow("The Famous Sinc Function");
-	glutDisplayFunc(myDisplay);
-	myInit();
-	glutMainLoop();
+	// 选择应用ID
+	cout << "请选择应用ID:" << endl;
+	cout << "01：美柚经期" << endl;
+	cout << "02：美柚孕期" << endl;
+	cout << "03：O2O商家段" << endl;
+	cout << "05：美柚育儿" << endl;
+	cout << "06：美柚经期PRO" << endl;
+	cout << "07：柚子街" << endl;
+	cout << "08：美柚孕期PRO" << endl;
+	cout << "请输入: ";
+
+	int app_id;
+	cin >> app_id;
+
+	// 选择平台
+	cout << "请选择平台:" << endl;
+	cout << "2:IOS"<< endl;
+	cout << "3:ANDROID"<< endl;
+	cout << "4:IPAD"<< endl;
+	cout << "5:WINDOWS PHONE"<< endl;
+	cout << "6:ANDROID PAD"<< endl;
+	cout << "请输入：";
+
+	int platform;
+	cin >> platform;
+
+	//版本号
+	cout << "请输入版本号:";
+	int version;
+	cin >> version;
+
+	// 渠道号
+	cout << "请输入渠道号文件：";
+	string filename;
+	cin >> filename;
+
+	fstream fin(filename, ios::in);
+	fstream fcout("channel.txt", ios::out);
+
+	string line;
+
+	while (getline(fin, line)) //从文件中读取字符串到输入输出流中。不可以换成get（）。
+	{
+		fcout << setw(2) << setfill('0') <<app_id 
+			<< setw(1)<<platform  
+			<<setw(4)<<setfill('0')<<version  
+			<<setw(4) << setfill('0') << line << "00000" << "\n"; //写入数据
+	}
+	fin.close();
+	fcout.close();
+
+	//for (int i = 1;i < 425;++i)
+	//	fcout << app_id << platform << version << setw(4) << setfill('0') << i << "00000" << "\n"; //写入数据
+	//	//fcout << app_id << platform << version << setw(4) << setfill('0') << i << "\n"; //写入数据
+
+	//fcout.close();
 }
