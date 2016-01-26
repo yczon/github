@@ -8,8 +8,7 @@
 
 GLsizei winWidth = 680, winHeight = 480;
 GLint xRaster = 0, yRaster = 0;
-
-
+int myClientCount = 0;
 
 GLint dataValue[12] = { 420,342,324,310,262,185,
 190,196,217,240,312,438 };
@@ -68,12 +67,14 @@ GLUI_RadioGroup *platformGroup;
 GLUI_EditText *versionText;
 GLUI_EditText *channelNoStartText;
 GLUI_EditText *channelNoEndText;
+GLUI_EditText *filepathText;
 
 int appId;
 int platform;
 int version;
 int channelNoStart;
 int channelNoEnd;
+string filepath="./channel_number.txt";
 
 
 // 应用ID
@@ -84,7 +85,7 @@ void getAppId(int control)
 // 平台
 void getPlatform(int control)
 {
-	platform = platformGroup->get_int_val();
+	platform = platformGroup->get_int_val()+2;
 }
 // 版本
 void getVersion(int control)
@@ -103,6 +104,42 @@ void getChannelNoEnd(int control)
 }
 
 vector<vector<char>> myclientArr;
+// 文件路径
+void getFilepath(int control)
+{
+	string file;
+	file = filepathText->get_text();
+	if (file != "") {
+		filepath = file;
+		myclientArr.clear();
+	}
+	fstream fin(filepath, ios::in);
+	fstream fcout("channel.txt", ios::out);
+
+	string line;
+	while (getline(fin, line)) //从文件中读取字符串到输入输出流中。不可以换成get（）。
+	{
+		//fcout << app_id << platform << version << setw(4) << setfill('0') << line << "00000" << "\n"; //写入数据
+		stringstream myclient_str;
+		myclient_str << setw(2) << setfill('0') << appId
+			<< setw(1) << platform
+			<< setw(4) << setfill('0') << version
+			<< setw(4) << setfill('0') << line << "00000";
+
+		cout << myclient_str.str() << endl;
+		fcout << myclient_str.str() << "\n"; //写入数据
+		vector<char> myclient;
+		char ch;
+		while ((ch = myclient_str.get()) != EOF) {
+			myclient.push_back(ch);
+		}
+		myclientArr.push_back(myclient);
+		myClientCount++;
+	}
+	fin.close();
+
+}
+
 // 完成
 void submit(int control)
 {
@@ -111,26 +148,39 @@ void submit(int control)
 	cout << "version:" << version << endl;
 	cout << "channel number start:" << channelNoStart << endl;
 	cout << "channel number end:" << channelNoEnd << endl;
-	char ch;
-	for (int i = channelNoStart;i <= channelNoEnd;++i) {
-		stringstream myclient_str;
-			myclient_str << setw(2) << setfill('0') << appId
-			<< setw(1) << platform
-			<< setw(4) << setfill('0') << version
-			<< setw(4) << setfill('0') << i << "00000";
 
-		vector<char> myclient;
-		while ((ch = myclient_str.get())!=EOF) {
-			myclient.push_back(ch);
+
+	char ch;
+	if (myclientArr.begin() == myclientArr.end()) {
+		fstream fcout("channel.txt", ios::out);
+		for (int i = channelNoStart;i <= channelNoEnd;++i) {
+			stringstream myclient_str;
+			myclient_str << setw(2) << setfill('0') << appId
+				<< setw(1) << platform
+				<< setw(4) << setfill('0') << version
+				<< setw(4) << setfill('0') << i << "00000";
+
+			fcout << myclient_str.str() << "\n"; //写入数据
+
+			vector<char> myclient;
+			while ((ch = myclient_str.get()) != EOF) {
+				myclient.push_back(ch);
+			}
+			myclientArr.push_back(myclient);
+			myClientCount++;
 		}
-		myclientArr.push_back(myclient);
+		fcout.close();
 	}
 
+	// 完成后提示语
 	GLUI *glui_bt = GLUI_Master.create_glui_subwindow(main_window, GLUI_SUBWINDOW_BOTTOM);
-	glui_bt->add_statictext("done!");
+	stringstream result;
+	result << "done! " << myClientCount << " myClient number were created. press [q] to quit!";
+	string str = result.str();
+	glui_bt->add_statictext(str.c_str());
 }
 
-void lineGraph(void)
+void myDisplay(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT);					// Clear display window.
 
@@ -155,7 +205,7 @@ void main(int argc, char **argv)
 	glutInitWindowSize(640, 480);
 	glutInitWindowPosition(100, 150);
 	main_window = glutCreateWindow("The Famous Sinc Function");
-	glutDisplayFunc(lineGraph);
+	glutDisplayFunc(myDisplay);
 	GLUI_Master.set_glutKeyboardFunc(myGlutKeyboard);
 	GLUI_Master.set_glutMouseFunc(myGlutMouse);
 	myInit();
@@ -195,6 +245,9 @@ void main(int argc, char **argv)
 	glui->add_statictext("channel number:");
 	channelNoStartText = glui->add_edittext("From:",GLUI_EDITTEXT_INT,0,12,getChannelNoStart);
 	channelNoEndText = glui->add_edittext("To:",GLUI_EDITTEXT_INT,0,13,getChannelNoEnd);
+
+	glui->add_statictext("or enter file path:");
+	filepathText = glui->add_edittext("file path:",GLUI_EDITTEXT_STRING,0,13,getFilepath);
 
 	glui->add_separator();
 	glui->add_button("submit",1, submit);
