@@ -39,6 +39,7 @@ class GLLine {
 public:
 	GLPoint CP;
 
+	GLLine() = default;
 	GLLine(GLint x1, GLint y1)
 	{
 		CP.x = x1;
@@ -50,6 +51,11 @@ public:
 	{
 		CP.x = x;
 		CP.y = y;
+	}
+	// moveTo жиди
+	void moveTo(GLPoint p)
+	{
+		CP.set(p);
 	}
 
 	//<<<<<<<<<<<< lineTo >>>>>>>>>>>>>>>>
@@ -63,6 +69,16 @@ public:
 		CP.x = x;
 		CP.y = y;
 	}
+	// lineTo жиди
+	void lineTo(GLPoint p)
+	{
+		glBegin(GL_LINES);
+		glVertex2f(CP.x, CP.y);
+		glVertex2f(p.x, p.y);
+		glEnd();
+		glFlush();
+		CP.set(p);
+	}
 };
 
 void setColor(const std::string);
@@ -71,3 +87,9 @@ void drawLine(GLint x1,GLint y1,GLint x2,GLint y2);
 void drawCircle(GLfloat radius);
 float lerp(float a, float b, float t);
 GLPoint tween(GLPoint A,  GLPoint B, float t);
+void initCT(void);
+void scale2D(double sx, double sy);
+void translate2D(double dx,double dy);
+void rotate2D(double angle);
+void drawTween(GLPoint A[], GLPoint B[], int n, float t);
+

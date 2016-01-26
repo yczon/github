@@ -87,4 +87,44 @@ GLPoint tween(GLPoint A, GLPoint B, float t)
 	T.y = lerp(A.y,B.y,t);
 	return T;
 }
+//set CT to the identity matric
+void initCT(void)
+{
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+}
+// 缩放
+void scale2D(double sx, double sy)
+{
+	glMatrixMode(GL_MODELVIEW);
+	glScaled(sx,sy,1.0);
+}
+// 平移
+void translate2D(double dx, double dy)
+{
+	glMatrixMode(GL_MODELVIEW);
+	glTranslated(dx,dy,1.0);
+}
+// 旋转
+void rotate2D(double angle)
+{
+	glMatrixMode(GL_MODELVIEW);
+	glRotated(angle,0.0,0.0,1.0);
+}
+// 内插实现
+void drawTween(GLPoint A[], GLPoint B[], int n, float t)
+{
+	GLLine line;
+	for (int i = 0;i < n;i++) {
+		GLPoint P;
+		P = tween(A[i], B[i], t);
+		if (i == 0) {
+			line.moveTo(P);
+		}
+		else {
+			line.lineTo(P);
+		}
+	}
+}
+
 
