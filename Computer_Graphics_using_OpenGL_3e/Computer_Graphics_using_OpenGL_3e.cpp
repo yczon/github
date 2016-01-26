@@ -6,10 +6,8 @@ GLPoint currPos;
 GLPoint CP;
 GLLine line;
 
-GLPoint h[] = { { 0,0 },{ 0,20 },{ 10,30 },{ 20,20 },{ 20,0 },{0,0} };
-GLPoint door[] = { {10,0},{10,10},{15,10},{15,0} };
-GLPoint B[] = { { 0,50 },{ 15,10 },{ 5,10 },{ 0,30 },{ -15,-10 },
-			    { -20,0 },{ 0,50 } };
+GLPoint h[] = { { 0,0 },{ 15,0 },{ 20,10 },{ 22,12 },{ 17,0 },
+				{30,0},{35,7},{37,5},{32,0},{40,0} };
 
 void myInit() {
 
@@ -21,13 +19,13 @@ void myInit() {
 	gluOrtho2D(-320, 320, -240, 240);			// 接下来将完整的说明
 }
 
-void startMotif()
+void flakeMotif()
 {
 	GLLine line;
 	// house
-	for (int i = 0;i < 6;++i) {
-		line.moveTo(B[i]);
-		line.lineTo(B[i+1]);
+	for (int i = 0;i < 9;++i) {
+		line.moveTo(h[i]);
+		line.lineTo(h[i+1]);
 	}
 }
 //<<<<<<<<<<<<<<<<<<<< myDisplay >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -37,9 +35,12 @@ void myDisplay(void)
 	glClear(GL_COLOR_BUFFER_BIT);
 	setColor(string("blue"));
 	initCT();
-	for (int count = 0;count < 5;count++) {
-		startMotif();
-		rotate2D(72.0);
+	for (int count = 0;count < 6;count++) {
+		flakeMotif();
+		scale2D(1.0,-1.0);
+		flakeMotif();
+		scale2D(1.0, -1.0);
+		rotate2D(60.0);
 	}
 	glFlush();
 }
