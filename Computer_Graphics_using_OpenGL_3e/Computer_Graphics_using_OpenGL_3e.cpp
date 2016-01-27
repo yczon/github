@@ -2,57 +2,84 @@
 #include"OpenglDraw.h"
 
 using namespace std;
-GLPoint currPos;
-GLPoint CP;
-GLLine line;
+//不显示控制台窗口  
+#pragma comment( linker, "/subsystem:\"windows\" /entry:\"mainCRTStartup\"")  
 
-GLPoint h[] = { { 0,0 },{ 15,0 },{ 20,10 },{ 22,12 },{ 17,0 },
-				{30,0},{35,7},{37,5},{32,0},{40,0} };
-
-void myInit() {
-
-	glClearColor(1.0, 1.0, 1.0, 0.0);		// 设置背景颜色为白色
-	glColor3f(0.0f, 0.0f, 0.0f);			// 设置绘图颜色为黑色
-	glPointSize(2.0);						// 设置点的大小为4x4像素
-	glMatrixMode(GL_PROJECTION);			// 设置合适的矩阵
-	glLoadIdentity();						// 后台将解释
-	gluOrtho2D(-320, 320, -240, 240);			// 接下来将完整的说明
-}
-
-void flakeMotif()
+void display()
 {
-	GLLine line;
-	// house
-	for (int i = 0;i < 9;++i) {
-		line.moveTo(h[i]);
-		line.lineTo(h[i+1]);
-	}
-}
-//<<<<<<<<<<<<<<<<<<<< myDisplay >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-void myDisplay(void)
-{
-	glClearColor(1,1,1,0);
 	glClear(GL_COLOR_BUFFER_BIT);
-	setColor(string("blue"));
-	initCT();
-	for (int count = 0;count < 6;count++) {
-		flakeMotif();
-		scale2D(1.0,-1.0);
-		flakeMotif();
-		scale2D(1.0, -1.0);
-		rotate2D(60.0);
-	}
+	glColor3f(1.0, 0.0, 0.0);
+	//画分割线，分成四个视见区  
+	glViewport(0, 0, 400, 400);
+	glBegin(GL_LINES);
+	glVertex2f(-1.0, 0);
+	glVertex2f(1.0, 0);
+	glVertex2f(0.0, -1.0);
+	glVertex2f(0.0, 1.0);
+	glEnd();
+
+	//定义在左下角的区域  
+	glColor3f(0.0, 1.0, 0.0);
+	glViewport(0, 0, 200, 200);
+	glBegin(GL_POLYGON);
+	glVertex2f(-0.5, -0.5);
+	glVertex2f(-0.5, 0.5);
+	glVertex2f(0.5, 0.5);
+	glVertex2f(0.5, -0.5);
+	glEnd();
+
+
+	//定义在右上角的区域  
+	glColor3f(0.0, 0.0, 1.0);
+	glViewport(200, 200, 200, 200);//注意，后面这两个参数是高度和宽度，而不是坐标  
+	glBegin(GL_POLYGON);
+	glVertex2f(-0.5, -0.5);
+	glVertex2f(-0.5, 0.5);
+	glVertex2f(0.5, 0.5);
+	glVertex2f(0.5, -0.5);
+	glEnd();
+
+	//定义在左上角的区域  
+	glColor3f(1.0, 0.0, 0.0);
+	glViewport(0, 200, 200, 200);//注意，后面这两个参数是高度和宽度，而不是坐标  
+	glBegin(GL_POLYGON);
+	glVertex2f(-0.5, -0.5);
+	glVertex2f(-0.5, 0.5);
+	glVertex2f(0.5, 0.5);
+	glVertex2f(0.5, -0.5);
+	glEnd();
+
+	//定义在右下角  
+	glColor3f(1.0, 1.0, 1.0);
+	glViewport(200, 0, 200, 200);//注意，后面这两个参数是高度和宽度，而不是坐标  
+	glBegin(GL_POLYGON);
+	glVertex2f(-0.5, -0.5);
+	glVertex2f(-0.5, 0.5);
+	glVertex2f(0.5, 0.5);
+	glVertex2f(0.5, -0.5);
+	glEnd();
 	glFlush();
 }
-//------main------
-void main(int argc, char **argv)
+
+void init()
+{
+	glClearColor(0.0, 0.0, 0.0, 0.0);
+	glColor3f(1.0, 1.0, 1.0);
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	//定义剪裁面  
+	gluOrtho2D(-1.0, 1.0, -1.0, 1.0);
+}
+
+int main(int argc, char ** argv)
 {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
-	glutInitWindowSize(640, 480);
-	glutInitWindowPosition(100, 150);
-	glutCreateWindow("The Famous Sinc Function");
-	glutDisplayFunc(myDisplay);
-	myInit();
+	glutInitWindowPosition(100, 100);
+	glutInitWindowSize(400, 400);
+	glutCreateWindow("glviewport");
+	glutDisplayFunc(display);
+	init();
 	glutMainLoop();
 }
