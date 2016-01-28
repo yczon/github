@@ -27,13 +27,29 @@ void display()
 	glEnd();
 
 	glColor3f(1.0, 1.0, 1.0);
-	glViewport(0, 0, winWidth/2, winHeight/2);//注意，后面这两个参数是高度和宽度，而不是坐标  
-	glBegin(GL_POLYGON);
-	glVertex2f(coorLeft/2, coorBottom /2);
-	glVertex2f(coorLeft/2, coorTop/2);
-	glVertex2f(coorRight/2,coorTop/2);
-	glVertex2f(coorRight/2, coorBottom/2);
-	glEnd();
+	//glViewport(0, 0, winWidth/2, winHeight/2);//注意，后面这两个参数是高度和宽度，而不是坐标  
+	//glBegin(GL_POLYGON);
+	//glVertex2f(-0.5, -0.5);
+	//glVertex2f(-0.5, 0.5);
+	//glVertex2f(0.5,0.5);
+	//glVertex2f(0.5,-0.5);
+	//glEnd();
+
+	int N = 5;
+	GLPoint *pointlist = new GLPoint[N];
+	GLfloat theta = (2.0f * PI) / N;
+	GLLine line;
+	GLfloat radius = 0.5;
+	for (int c = 0; c < N; c++) {
+		pointlist[c].set(radius*sin(theta*c), radius*cos(theta*c));
+	}
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			line.moveTo(pointlist[i]);
+			line.lineTo(pointlist[j]);
+		}
+	}
+
 	glFlush();
 }
 
@@ -42,6 +58,7 @@ void init()
 	glClearColor(0.0, 0.0, 0.0, 0.0);
 	glColor3f(1.0, 1.0, 1.0);
 
+	glViewport(0,0,winWidth,winHeight);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	//定义剪裁面  
