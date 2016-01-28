@@ -15,7 +15,8 @@ GLdouble coorTop = 1;
 
 void display()
 {
-	glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 	glColor3f(1.0, 0.0, 0.0);
 	//画分割线，分成四个视见区  
 	glViewport(0, 0, winWidth, winHeight);
@@ -60,9 +61,23 @@ void init()
 
 	glViewport(0,0,winWidth,winHeight);
 	glMatrixMode(GL_PROJECTION);
+	//glLoadIdentity();
+	//定义剪裁面  
+	//gluOrtho2D(coorLeft,coorRight,coorBottom,coorTop);
+}
+
+void reshape(int w, int h)
+{
+	glViewport(0, 0, (GLsizei)w, (GLsizei)h);
+	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	//定义剪裁面  
-	gluOrtho2D(coorLeft,coorRight,coorBottom,coorTop);
+	if (w <= h)
+		glOrtho(-1, 1, -1 * (GLfloat)h / (GLfloat)w, 1 * (GLfloat)h / (GLfloat)w, -10.0, 10.0);
+	else
+		glOrtho(-1*(GLfloat)w / (GLfloat)h, 1*(GLfloat)w / (GLfloat)h, -1, 1, -10.0, 10.0);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
 }
 
 int main(int argc, char ** argv)
@@ -70,9 +85,10 @@ int main(int argc, char ** argv)
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
 	glutInitWindowPosition(100, 100);
-	glutInitWindowSize(640, 480);
+	glutInitWindowSize(winWidth, winHeight);
 	glutCreateWindow("glviewport");
 	glutDisplayFunc(display);
+	glutReshapeFunc(reshape);
 	init();
 	glutMainLoop();
 }
