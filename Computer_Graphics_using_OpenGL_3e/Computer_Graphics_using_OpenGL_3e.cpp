@@ -17,24 +17,9 @@ void display()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glColor3f(1.0, 0.0, 0.0);
-	//画分割线，分成四个视见区  
-	glViewport(0, 0, winWidth, winHeight);
-	glBegin(GL_LINES);
-	glVertex2f(coorLeft, 0.0);
-	glVertex2f(coorRight, 0.0);
-	glVertex2f(0.0, coorBottom);
-	glVertex2f(0.0, coorTop);
-	glEnd();
+	glColor3f(1.0, 1.0, 1.0);  // 白色
 
-	glColor3f(1.0, 1.0, 1.0);
-	//glViewport(0, 0, winWidth/2, winHeight/2);//注意，后面这两个参数是高度和宽度，而不是坐标  
-	//glBegin(GL_POLYGON);
-	//glVertex2f(-0.5, -0.5);
-	//glVertex2f(-0.5, 0.5);
-	//glVertex2f(0.5,0.5);
-	//glVertex2f(0.5,-0.5);
-	//glEnd();
+	glViewport(0, 0, winWidth, winHeight);//注意，后面这两个参数是高度和宽度，而不是坐标  
 
 	int N = 5;
 	GLPoint *pointlist = new GLPoint[N];
@@ -44,12 +29,12 @@ void display()
 	for (int c = 0; c < N; c++) {
 		pointlist[c].set(radius*sin(theta*c), radius*cos(theta*c));
 	}
-	for (int i = 0; i < N; i++) {
-		for (int j = 0; j < N; j++) {
-			line.moveTo(pointlist[i]);
-			line.lineTo(pointlist[j]);
-		}
+	for (int i = 0; i < N-1; i++) {
+		line.moveTo(pointlist[i]);
+		line.lineTo(pointlist[i+1]);
 	}
+	line.moveTo(pointlist[0]);
+	line.lineTo(pointlist[N-1]);
 
 	glFlush();
 }
