@@ -27,3 +27,11 @@
 *.opendb
 *.tlog
 *.user
+/opencv/Debug
+*.exe
+*.ipch
+*.ilk
+/Computer_Graphics_using_OpenGL_3e/stdafx.h
+/Computer_Graphics_using_OpenGL_3e/targetver.h
+/Computer_Graphics_using_OpenGL_3e/stdafx.cpp
+/Computer_Graphics_using_OpenGL_3e/ReadMe.txt
